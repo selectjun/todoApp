@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.selectjun.todo.config.security.mapper.CertificationMapper">
+
+    <select id="findById" parameterType="String" resultType="com.selectjun.todo.config.security.domain.CertificationEntity">
+        SELECT
+            ID
+            , PASSWORD
+            , NAME
+            , EMAIL
+            , CREATE_AT
+            , UPDATE_AT
+            , IS_DELETE
+        FROM
+            USER
+        <where>
+            ID = #{id}
+        </where>
+    </select>
+
+</mapper>
