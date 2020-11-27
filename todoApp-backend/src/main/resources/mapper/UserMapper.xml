@@ -22,9 +22,9 @@
 
     <select id="countById" parameterType="java.lang.String" resultType="Long">
         SELECT
-        COUNT(*)
+            COUNT(*)
         FROM
-        USER
+            USER
         <where>
             id = #{id}
         </where>
