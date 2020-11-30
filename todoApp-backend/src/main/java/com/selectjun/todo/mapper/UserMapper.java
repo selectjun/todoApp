@@ -10,7 +10,6 @@ public interface UserMapper {
     /**
      * 회원 정보 저장
      * @param userEntity    회원 정보
-     * @return              회원 구별 정보(아이디)
      */
     public void save(UserEntity userEntity);
 
