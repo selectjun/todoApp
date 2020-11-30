@@ -67,7 +67,7 @@ public class TokenController {
         }
 
         // 회원 정보 확인
-        CertificationEntity certificationEntity = certificationMapper.findById(accessEntity.getId());
+        CertificationEntity certificationEntity = certificationMapper.getUser(accessEntity.getId());
         if (certificationEntity == null) {
             response.put("success", false);
             response.put("message", "회원정보가 존재하지 않습니다");
@@ -82,7 +82,7 @@ public class TokenController {
         }
 
         // 회원 권한 확인
-        List<String> roles = certificationAuthorityMapper.findAuthorityById(accessEntity.getId());
+        List<String> roles = certificationAuthorityMapper.getUserAuthority(accessEntity.getId());
         if (roles == null) {
             response.put("success", false);
             response.put("message", "접근권한이 없습니다");

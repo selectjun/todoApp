@@ -40,7 +40,7 @@ public class UserService {
      * @return      중복 여부(true: 중복, false: 미중복)
      */
     public Boolean duplicate(String id) {
-        if (userMapper.countById(id) < 1) {
+        if (userMapper.countUser(id) < 1) {
             return false;
         } else {
             return true;
@@ -56,7 +56,7 @@ public class UserService {
         // 패스워드 암호화
         userEntity.setPassword(sha256.encryption(userEntity.getPassword()));
 
-        userMapper.save(userEntity.toEncryptionEntity(aes256));
+        userMapper.insertUser(userEntity.toEncryptionEntity(aes256));
         userAuthorityMapper.save(userEntity.getId());
 
         return userEntity.getId();

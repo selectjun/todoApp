@@ -34,6 +34,9 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/healthCheck/").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/user/").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/todo/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/todo/**").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/todo/**").permitAll()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
     }

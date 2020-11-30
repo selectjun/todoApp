@@ -14,13 +14,13 @@ public interface CertificationAuthorityMapper {
      * @param id    회원 구별 정보(아이디)
      * @return      회원 권한 전체 목록
      */
-    public List<CertificationAuthorityEntity> findById(@Param("id") String id);
+    public List<CertificationAuthorityEntity> getUserAuthorityList(@Param("id") String id);
 
     /**
      * 회원 권환 조회(권한명)
      * @param id    회원 구별 정보(아이디)
      * @return      권한 목록 권한명 목록
      */
-    public List<String> findAuthorityById(@Param("id") String id);
+    public List<String> getUserAuthority(@Param("id") String id);
 
 }

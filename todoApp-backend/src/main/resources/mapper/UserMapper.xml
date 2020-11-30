@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.selectjun.todo.mapper.UserMapper">
 
-    <insert id="save" parameterType="com.selectjun.todo.domain.UserEntity">
+    <insert id="insertUser" parameterType="com.selectjun.todo.domain.UserEntity">
         INSERT INTO USER (
             ID
             , PASSWORD
@@ -20,7 +20,7 @@
         )
     </insert>
 
-    <select id="countById" parameterType="java.lang.String" resultType="Long">
+    <select id="countUser" parameterType="java.lang.String" resultType="Long">
         SELECT
             COUNT(*)
         FROM

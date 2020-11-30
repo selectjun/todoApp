@@ -12,6 +12,6 @@ public interface CertificationMapper {
      * @param id    회원 구별 정보(아이디)
      * @return      회원 정보 객체
      */
-    public CertificationEntity findById(@Param("id") String id);
+    public CertificationEntity getUser(@Param("id") String id);
 
 }

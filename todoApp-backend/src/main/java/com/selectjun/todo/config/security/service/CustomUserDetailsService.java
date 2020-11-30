@@ -31,8 +31,8 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        CertificationEntity certificationEntity = certificationMapper.findById(username);
-        certificationEntity.setRoles(certificationAuthorityMapper.findAuthorityById(username));
+        CertificationEntity certificationEntity = certificationMapper.getUser(username);
+        certificationEntity.setRoles(certificationAuthorityMapper.getUserAuthority(username));
         return certificationEntity;
     }
 
