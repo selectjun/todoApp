@@ -32,8 +32,11 @@ public class UserController {
     private final ValidationProvider validationProvider;
 
     /**
+     *
      * 회원 가입
-     * @param userEntity
+     * @param userEntity    사용자 정보
+     * @param errors        유효성 객체
+     * @return              성공 여부
      */
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseEntity join(@Valid UserEntity userEntity, Errors errors) {

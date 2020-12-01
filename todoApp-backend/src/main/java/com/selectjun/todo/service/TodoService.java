@@ -30,7 +30,7 @@ public class TodoService {
 
     /**
      * To Do 목록 가져오기
-     * @return
+     * @return  To Do 목록
      */
     public List<TodoEntity> getTodoList() {
         return todoMapper.getTodoList();
@@ -38,8 +38,8 @@ public class TodoService {
 
     /**
      * To Do 가져오기
-     * @param todoId
-     * @return
+     * @param todoId    todoId(PK)
+     * @return          To Do
      */
     public TodoEntity getTodo(Long todoId) {
         return todoMapper.getTodo(todoId);
@@ -47,7 +47,7 @@ public class TodoService {
 
     /**
      * To Do 수정
-     * @param todoEntity
+     * @param todoEntity    To Do 정보
      */
     public void updateTodo(TodoEntity todoEntity) {
         todoMapper.updateTodo(todoEntity);
@@ -55,7 +55,7 @@ public class TodoService {
 
     /**
      * To Do 삭제
-     * @param todoId
+     * @param todoId   todoId(PK)
      */
     public void deleteTodo(Long todoId) {
         todoMapper.deleteTodo(todoId);

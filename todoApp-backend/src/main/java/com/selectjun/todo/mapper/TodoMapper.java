@@ -29,7 +29,7 @@ public interface TodoMapper {
 
     /**
      * To Do 수정
-     * @param todoEntity    To Do
+     * @param todoEntity    To Do 정보
      */
     public void updateTodo(TodoEntity todoEntity);
 

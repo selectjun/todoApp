@@ -7,8 +7,6 @@ import com.selectjun.todo.util.validation.ValidationProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,12 +32,15 @@ public class TodoController {
     private final ValidationProvider validationProvider;
 
     /**
-     * JwtTokenProvider
+     * JWT Component
      */
     private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * To Do 추가
+     * @param todoEntity    To Do 정보
+     * @param errors        유효성 객체
+     * @return              성공 여부
      */
     @PostMapping("/")
     public ResponseEntity insertTodo(@Valid TodoEntity todoEntity, Errors errors) {
@@ -66,7 +67,7 @@ public class TodoController {
 
     /**
      * To Do 목록 가져오기
-     * @return
+     * @return  To Do 목록
      */
     @GetMapping("/")
     public ResponseEntity getTodoList() {
@@ -89,7 +90,7 @@ public class TodoController {
     /**
      * To Do 가져오기
      * @param todoId    todoId(PK)
-     * @return
+     * @return          To Do
      */
     @GetMapping("/{todoId}/")
     public ResponseEntity getTodo(@PathVariable Long todoId) {
@@ -116,6 +117,10 @@ public class TodoController {
 
     /**
      * To Do 수정
+     * @param todoEntity    To Do 정보
+     * @param errors        유효성 객체
+     * @param request       요청 객체
+     * @return              성공 여부
      */
     @PutMapping("/")
     public ResponseEntity updateTodo(@Valid TodoEntity todoEntity, Errors errors
@@ -155,7 +160,8 @@ public class TodoController {
 
     /**
      * To Do 삭제
-     * @param todoId
+     * @param todoId    todoId(PK)
+     * @return          성공 여부
      */
     @PutMapping("/{todoId}/delete/")
     public ResponseEntity deleteTodo(@PathVariable Long todoId) {
