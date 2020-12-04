@@ -89,9 +89,11 @@ public class TokenController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        // Access Token 발급
         response.put("success", true);
-        httpServletResponse.addHeader("X-AUTH-TOKEN", jwtTokenProvider.createToken(accessEntity.getId(), roles));
+
+        // Access Token 발급
+        String xAuthToken = jwtTokenProvider.createToken(accessEntity.getId(), roles);
+        httpServletResponse.setHeader("X-AUTH-TOKEN", xAuthToken);
 
         return ResponseEntity.ok().body(response);
     }
