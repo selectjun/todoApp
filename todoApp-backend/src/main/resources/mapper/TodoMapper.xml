@@ -40,6 +40,9 @@
             , IS_DELETE
         FROM
             TODO
+        <where>
+            IS_DELETE = 0
+        </where>
     </select>
 
     <select id="getTodo" resultType="com.selectjun.todo.domain.TodoEntity">
