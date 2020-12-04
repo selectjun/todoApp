@@ -51,6 +51,8 @@ module.exports =  {
     compress: true,
     port: 9000,
     hot: true,
+    inline: true,
+    historyApiFallback: true,
     watchContentBase: true,
     watchOptions: {
       poll: true
