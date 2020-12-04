@@ -43,13 +43,19 @@ public class TodoController {
      * @return              성공 여부
      */
     @PostMapping("/")
-    public ResponseEntity insertTodo(@Valid TodoEntity todoEntity, Errors errors) {
+    public ResponseEntity insertTodo(@Valid TodoEntity todoEntity
+                                     , Errors errors, HttpServletRequest request) {
         Map<String, Object> response = new HashMap<String, Object>();
         
         // 유효성 체크
         if (errors.hasErrors()) {
             return validationProvider.valid(errors);
         }
+
+        // 사용자 ID 가져오기
+        String token = jwtTokenProvider.resolveToken(request);
+        String id = jwtTokenProvider.getUserPk(token);
+        todoEntity.setId(id);
 
         Long todoId = todoService.insert(todoEntity);
 
@@ -140,11 +146,7 @@ public class TodoController {
 
         String token = jwtTokenProvider.resolveToken(request);
         String id = jwtTokenProvider.getUserPk(token);
-        if (!id.equals(todoEntity.getId())) {
-            response.put("success", false);
-            response.put("message", "사용자 정보가 일치하지 않습니다");
-            return ResponseEntity.badRequest().body(response);
-        }
+        todoEntity.setId(id);
 
         try {
             todoService.updateTodo(todoEntity);

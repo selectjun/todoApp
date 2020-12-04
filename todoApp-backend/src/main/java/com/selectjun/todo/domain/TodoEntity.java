@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,7 +17,6 @@ public class TodoEntity extends TimeEntity {
     /**
      * TODO_ID(PK)
      */
-    @NotNull
     private Long todoId;
 
     /**
@@ -45,7 +43,6 @@ public class TodoEntity extends TimeEntity {
     /**
      * 등록자(FK)
      */
-    @NotBlank(message = "등록자를 입력해주세요")
     private String id;
 
     /**
