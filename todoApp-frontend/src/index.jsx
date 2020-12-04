@@ -2,4 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 
-ReactDOM.render(<App />, document.getElementById("root"));
+import Login from "./pages/Login";
+
+if (sessionStorage.getItem("xAuthToken")) {
+  ReactDOM.render(<App />, document.getElementById("root"));
+} else {
+  ReactDOM.render(<Login />, document.getElementById("root"));
+}

@@ -5,23 +5,24 @@ const API = axios.create({
 });
 
 API.interceptors.request.use((requestConfig) => {
-    const XAuthToken = sessionStorage.getItem("XAuthToken");
-    requestConfig.headers["X-Auth-Token"] = XAuthToken;
+  const xAuthToken = sessionStorage.getItem("xAuthToken");
+  requestConfig.headers["X-AUTH-TOKEN"] = xAuthToken;
   return requestConfig;
 });
 
 API.interceptors.response.use(
   (response) => {
+    console.log(response);
     const authorization = response.headers["x-auth-token"];
     if (authorization) {
-      sessionStorage.setItem("XAuthToken", authorization);
+      sessionStorage.setItem("xAuthToken", authorization);
     }
     return response;
   },
   (error) => {
     if (error.response) {
-    //   console.warn(error.response);
-    //   console.log(error.response.data ? error.response.data.message : "");
+      // console.warn(error.response);
+      // console.log(error.response.data ? error.response.data.message : "");
     }
   }
 );
