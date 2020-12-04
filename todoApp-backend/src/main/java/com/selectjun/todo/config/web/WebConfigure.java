@@ -12,6 +12,8 @@ public class WebConfigure implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("*")
                 .allowedMethods("*")
+                .allowedHeaders("*", "X-AUTH-TOKEN")
+                .exposedHeaders("X-AUTH-TOKEN")
                 .maxAge(3000);
     }
 }
