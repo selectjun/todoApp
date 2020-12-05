@@ -26,18 +26,17 @@ const Login = () => {
         type="text"
         name="id"
         placeholder="아이디"
-        onChange={(e) => {
-          handleLoginData("id", e.target.value);
-        }} />
+        value={loginData.id}
+        onKeyDown={e => e.key == "Enter" ? submitLogin() : ""}
+        onChange={e => handleLoginData("id", e.target.value) } />
       <br />
       <input
         type="password"
         name="password"
-        id="password"
         placeholder="암호"
-        onChange={(e) => {
-          handleLoginData("password", e.target.value);
-        }} />
+        value={loginData.password}
+        onKeyDown={e => e.key == "Enter" ? submitLogin() : ""}
+        onChange={e => handleLoginData("password", e.target.value)} />
         <br />
         <input
           type="button"
