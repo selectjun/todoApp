@@ -6,13 +6,12 @@ const API = axios.create({
 
 API.interceptors.request.use((requestConfig) => {
   const xAuthToken = sessionStorage.getItem("xAuthToken");
-  requestConfig.headers["X-AUTH-TOKEN"] = xAuthToken;
+  requestConfig.headers["X-AUTH-TOKEN"] = `${xAuthToken}`;
   return requestConfig;
 });
 
 API.interceptors.response.use(
   (response) => {
-    console.log(response);
     const authorization = response.headers["x-auth-token"];
     if (authorization) {
       sessionStorage.setItem("xAuthToken", authorization);
