@@ -1,27 +1,47 @@
 const express = require("express");
+const { validationResult } = require("express-validator");
 const router = express.Router();
 
-const { Op } = require("sequelize");
-const sequelize = require("../config/sequlize");
-const todoModel = sequelize.import("../models/todo");
+const { auth } = require("./auth");
+const { models } = require("../sequelize");
+const todoInsertSchema = require("../schemas/todo.insert.schema");
+
+/**
+ * 페이지 당 게시물 수
+ */
+const RECORDS_PER_PAGE = 2;
+
+/**
+ * Auth Interceptor
+ */
+router.all("/*", auth);
 
 /**
  * To Do 목록 가져오기
  */
-router.get("/", (req, res) => {
-  let response = {};
+router.get("/", [
 
-  todoModel.findAll({
+],(req, res) => {
+  const page = (!isNaN(req.query.page) && req.query.page > 0) ? req.query.page : 1;
+  const limit = RECORDS_PER_PAGE;
+  const offset = RECORDS_PER_PAGE * (page - 1);
+
+  models.todo.findAll({
     where: {
       isDelete: false
-    }
+    },
+    limit: limit,
+    offset: offset
   }).then(todoList => {
-    response.success = true;
-    response.todoList = todoList;
-    res.json(response);
+    res.status(200).json({
+      success: true,
+      todoList: todoList
+    });
   }).catch(err => {
-    response.success = false;
-    response.message = err;
+    res.status(500).json({
+      success: false,
+      message: err
+    });
   });
 });
 
@@ -30,100 +50,117 @@ router.get("/", (req, res) => {
  */
 router.get("/:todoId/", (req, res) => {
   const todoId = req.params.todoId;
-  let response = {};
-
+  
   if (!todoId) {
-    response.success = false;
-    response.message = "[todoId] 값이 존재하지 않습니다."
-    res.json(response);
+    res.status(400).json({
+      success: false,
+      message: "[todoId] 값이 존재하지 않습니다."
+    });
+  } else {
+    models.todo.findOne({
+      where: {
+        todoId: todoId,
+        isDelete: false
+      }
+    }).then(todo => {
+      res.status(200).json({
+        success: true,
+        todo: todo
+      });
+    }).catch(err => {
+      res.status(500).json({
+        success: false,
+        message: err
+      });
+    });
   }
-
-  todoModel.findOne({
-    where: {
-      todoId: todoId,
-      isDelete: false
-    }
-  }).then(todo => {
-    response.success = true;
-    response.todo = todo;
-    res.json(response);
-  }).catch(err => {
-    response.success = false;
-    response.message = err;
-    res.json(response);
-  });
 });
 
 /**
  * To Do 등록하기
  */
-router.post("/", (req, res) => {
-  let response = {};
+router.post("/", todoInsertSchema, (req, res) => {
+  const valid = validationResult(req);
 
-  if (!req.query.title) {
-    response.success = false;
-    response.message = "[title] 값을 입력해주세요"
-    res.json(response);
+  if (!valid.isEmpty()) {
+    res.status(400).json({
+      success: false,
+      param: valid.errors[0].param,
+      message: valid.errors[0].msg
+    });
+  } else {
+    models.todo.create(req.query).then(todo => {
+      res.status(200).json({
+        success: true,
+        todoId: todo.todoId
+      });
+    }).catch(err => {
+      res.status(500).json({
+        success: false,
+        message: err
+      });
+    });
   }
-
-  todoModel.create(req.query).then(todo => {
-    response.success = true;
-    response.todoId = todo.todoId;
-    res.json(response);
-  }).catch(err => {
-    response.success = false;
-    response.message = err;
-    res.json(response);
-  });
 });
 
 /**
  * To Do 수정하기
  */
 router.put("/:todoId/", (req, res) => {
-  let response = {};
+  const todoId = req.params.todoId
   
-  todoModel.update(req.query, {
-    where: {
-      todoId: req.params.todoId
-    }
-  }).then(todo => {
-    response.success = true;
-    response.todoId = todo.todoId;
-    res.json(response);
-  }).catch(err => {
-    response.success = false;
-    response.message = err;
-    res.json(response);
-  });
+  if (!todoId) {
+    res.status(400).json({
+      success: false,
+      message: "[todoId] 값이 존재하지 않습니다"
+    });
+  } else {
+    models.todo.update(req.query, {
+      where: {
+        todoId: todoId
+      }
+    }).then(() => {
+      res.status(200).json({
+        success: true,
+        todoId: todoId
+      });
+    }).catch(err => {
+      res.status(500).json({
+        success: false,
+        message: err
+      });
+    });
+  }
 });
 
 /**
  * To Do 삭제하기
  */
-router.put("/:todoId/delete/", (req, res) => {
-  let response = {};
+router.put("/:todoId/delete/", (req, res, next) => {
   const todoId = req.params.todoId;
 
   if (!todoId) {
-    response.success = false;
-    response.message = "[todoId] 값이 존재하지 않습니다."
-    res.json(response);
+    res.status(400).json({
+      success: false,
+      message: "[todoId] 값이 존재하지 않습니다"
+    });
+  } else {
+    models.todo.update({isDelete: true}, {
+      where: {
+        todoId: req.params.todoId
+      }
+    }).then(() => {
+      res.status(200).json({
+        success: true,
+        todoId: todoId
+      });
+    }).catch(err => {
+      res.status(500).json({
+        success: false,
+        message: err
+      });
+    });
   }
-  
-  todoModel.update({isDelete: true}, {
-    where: {
-      todoId: req.params.todoId
-    }
-  }).then(() => {
-    response.success = true;
-    res.json(response);
-  }).catch(err => {
-    response.success = false;
-    response.message = err;
-    res.json(response);
-  });
-
 });
 
 module.exports = router;
