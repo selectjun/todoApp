@@ -1,11 +1,11 @@
 const { Sequelize } = require('sequelize');
 const { applyExtraSetup } = require('./extra-setup');
 
+/**
+ * 설정
+ */
 const config = require("../config/config.json").dev;
 
-// In a real app, you should keep the database connection URL as an environment variable.
-// But for this example, we will just use a local SQLite database.
-// const sequelize = new Sequelize(process.env.DB_CONNECTION_URL);
 const sequelize = new Sequelize(
   // Schema Name
   config.datasource.database,
@@ -23,6 +23,7 @@ const sequelize = new Sequelize(
   }
 );
 
+// 연결 여부 확인
 sequelize
   .authenticate()
   .then(() => {
@@ -32,6 +33,7 @@ sequelize
     console.error('Unable to connect to the database:', err);
   });
 
+// Model 정의
 const modelDefiners = [
   require('./models/todo.model'),
   require('./models/user.model'),

@@ -1,9 +1,15 @@
 const express = require("express");
+const { validationResult } = require('express-validator');
 const router = express.Router();
 
-const { validationResult } = require('express-validator');
-
+/**
+ * Database Models
+ */
 const { models } = require('../sequelize');
+
+/**
+ * User 유효성 객체
+ */
 const userInsertSchema = require("../schemas/user.insert.schema");
 
 /**

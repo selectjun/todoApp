@@ -1,17 +1,31 @@
 const express = require("express");
+const { validationResult } = require('express-validator');
 const router = express.Router();
 
-const passwordEncoder = require("../utils/security/password-encoder.util");
+/**
+ * JWT Provider
+ */
 const jwtProvider = require("../utils/security/jwt-provider.util");
-const { validationResult } = require('express-validator');
-
-const { models } = require('../sequelize');
-const tokenGetSchema = require("../schemas/token.get.schema");
 
 /**
- * 사용자 등록
+ * 암호 인코더
  */
-router.post("/", tokenGetSchema, (req, res, next) => {
+const passwordEncoder = require("../utils/security/password-encoder.util");
+
+/**
+ * Database Modles
+ */
+const { models } = require('../sequelize');
+
+/**
+ * Token 유효성 객체
+ */
+const tokenGetValid = require("../validates/token.get.valid");
+
+/**
+ * Token 발급
+ */
+router.post("/", tokenGetValid, (req, res, next) => {
   const valid = validationResult(req);
 
   if (!valid.isEmpty()) {
@@ -42,7 +56,6 @@ router.post("/", tokenGetSchema, (req, res, next) => {
     });
   }
 }, (req, res) => {
-  // 사용자 조회
   models.user.findOne({
     where: {
       id: req.query.id

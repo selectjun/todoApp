@@ -6,7 +6,7 @@ const config = require("../../config/config.json").dev;
  * JWT Token 생성
  * @param userPk    회원 구별 정보(아이디)
  * @param roles     회원 권한
- * @return          토큰
+ * @return          token
  */
 const createToken = (userPk, roles) => {
   return jwt.sign({
@@ -18,9 +18,9 @@ const createToken = (userPk, roles) => {
 }
 
 /**
- * 인증
- * @param token 토큰
- * @return      인증 결과
+ * 권한 가져오기
+ * @param token token
+ * @return      권한
  */
 const getAuthentication = (token) => {
   return jwt.verify(token, btoa(config.jwt.secretKey)).roles;
@@ -28,7 +28,7 @@ const getAuthentication = (token) => {
 
 /**
  * 회원 구별 정보(아이디) 추출
- * @param token 토큰
+ * @param token token
  * @return      회원 구별 정보(아이디)
  */
 const getUserPk = (token) => {
@@ -38,7 +38,7 @@ const getUserPk = (token) => {
 /**
  * Header에서 Token 파싱
  * @param request   요청 객체
- * @return          토큰
+ * @return          token
  */
 const resolveToken = (req) => {
   return req.get("X-AUTH-TOKEN");
