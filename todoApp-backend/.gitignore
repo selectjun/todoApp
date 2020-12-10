@@ -1,8 +1,13 @@
 HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+/target
+
+/.mvn
+/mvnw
+/mvnw.cmd
+/src/main/resources/application.properties
+/src/main/**/target/
+/src/test/**/target/
+/src/test
 
 ### STS ###
 .apt_generated
@@ -31,6 +36,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-### ETC ###
-!**/src/main/resources/application.properties
