@@ -1,4 +1,8 @@
-function applyExtraSetup(sequelize) {
+/**
+ * Database 정의
+ * @param sequelize Sequelize 객체
+ */
+const applyExtraSetup = (sequelize) => {
   //const { user, authority } = sequelize.models;
 
   //user.belongsToMany(authority, {as: "user", through: "USER_AUTHORITY", foreignKey: "ID"});

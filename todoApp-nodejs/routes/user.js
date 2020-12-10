@@ -1,15 +1,21 @@
 const express = require("express");
+const { validationResult } = require('express-validator');
 const router = express.Router();
 
-const { validationResult } = require('express-validator');
-
+/**
+ * Database Models
+ */
 const { models } = require('../sequelize');
-const userInsertSchema = require("../schemas/user.insert.schema");
+
+/**
+ * User 유효성 객체
+ */
+const userInsertValid = require("../validates/user.insert.valid");
 
 /**
  * 사용자 등록
  */
-router.post("/", userInsertSchema, (req, res, next) => {
+router.post("/", userInsertValid, (req, res, next) => {
   const valid = validationResult(req);
 
   if (!valid.isEmpty()) {

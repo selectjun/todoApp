@@ -9,6 +9,7 @@ const userRouter = require("./routes/user");
 const todoRouter = require("./routes/todo");
 const tokenRotuer = require("./routes/token");
 
+// CORS 처리
 app.use(cors());
 
 app.use("/", indexRouter);

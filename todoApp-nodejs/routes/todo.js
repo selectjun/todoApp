@@ -2,9 +2,20 @@ const express = require("express");
 const { validationResult } = require("express-validator");
 const router = express.Router();
 
+/**
+ * 인증
+ */
 const { auth } = require("./auth");
+
+/**
+ * Database Models
+ */
 const { models } = require("../sequelize");
-const todoInsertSchema = require("../schemas/todo.insert.schema");
+
+/**
+ * To Do 유효성 객체
+ */
+const todoInsertValid = require("../schemas/todo.insert.valid");
 
 /**
  * 페이지 당 게시물 수
@@ -19,9 +30,7 @@ router.all("/*", auth);
 /**
  * To Do 목록 가져오기
  */
-router.get("/", [
-
-],(req, res) => {
+router.get("/", (req, res) => {
   const page = (!isNaN(req.query.page) && req.query.page > 0) ? req.query.page : 1;
   const limit = RECORDS_PER_PAGE;
   const offset = RECORDS_PER_PAGE * (page - 1);
@@ -79,7 +88,7 @@ router.get("/:todoId/", (req, res) => {
 /**
  * To Do 등록하기
  */
-router.post("/", todoInsertSchema, (req, res) => {
+router.post("/", todoInsertValid, (req, res) => {
   const valid = validationResult(req);
 
   if (!valid.isEmpty()) {
