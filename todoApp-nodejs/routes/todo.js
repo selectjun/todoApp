@@ -15,7 +15,7 @@ const { models } = require("../sequelize");
 /**
  * To Do 유효성 객체
  */
-const todoInsertValid = require("../schemas/todo.insert.valid");
+const todoInsertValid = require("../validates/todo.insert.valid");
 
 /**
  * 페이지 당 게시물 수
