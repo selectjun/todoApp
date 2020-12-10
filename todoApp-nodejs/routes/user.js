@@ -10,7 +10,11 @@ const { models } = require('../sequelize');
 /**
  * User 유효성 객체
  */
+<<<<<<< HEAD
+const userInsertValid = require("../validates/user.insert.valid");
+=======
 const userInsertSchema = require("../schemas/user.insert.schema");
+>>>>>>> 1da4708faa840b95c4b2c2164bcb5baa22d81fc9
 
 /**
  * 사용자 등록
