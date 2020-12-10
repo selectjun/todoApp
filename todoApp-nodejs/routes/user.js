@@ -10,7 +10,7 @@ const { models } = require('../sequelize');
 /**
  * User 유효성 객체
  */
-const userInsertValid = require("../validates/user.insert.valid");
+const userInsertSchema = require("../schemas/user.insert.schema");
 
 /**
  * 사용자 등록
