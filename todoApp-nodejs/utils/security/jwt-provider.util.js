@@ -1,4 +1,3 @@
-
 const jwt = require('jsonwebtoken');
 const config = require("../../config/config.json").dev;
 
@@ -12,7 +11,7 @@ const createToken = (userPk, roles) => {
   return jwt.sign({
     subject: userPk,
     roles: roles
-  }, btoa(config.jwt.secretKey), {
+  }, Buffer.from(config.jwt.secretKey).toString("base64"), {
     expiresIn: config.jwt.expiration
   });
 }
@@ -23,7 +22,7 @@ const createToken = (userPk, roles) => {
  * @return      권한
  */
 const getAuthentication = (token) => {
-  return jwt.verify(token, btoa(config.jwt.secretKey)).roles;
+  return jwt.verify(token, Buffer.from(config.jwt.secretKey).toString("base64")).roles;
 }
 
 /**
@@ -32,7 +31,7 @@ const getAuthentication = (token) => {
  * @return      회원 구별 정보(아이디)
  */
 const getUserPk = (token) => {
-  return jwt.verify(token, btoa(config.jwt.secretKey)).subject;
+  return jwt.verify(token, Buffer.from(config.jwt.secretKey).toString("base64")).subject;
 }
 
 /**
@@ -51,7 +50,7 @@ const resolveToken = (req) => {
  */
 const validToken = (token) => {
   try {
-    if (jwt.verify(token, btoa(config.jwt.secretKey))) {
+    if (jwt.verify(token, Buffer.from(config.jwt.secretKey).toString("base64"))) {
       return true;
     }
   } catch(err) {
