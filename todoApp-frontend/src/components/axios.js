@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:8080/api",
+  baseURL: "http://localhost:3000/api",
 });
 
 API.interceptors.request.use((requestConfig) => {
@@ -19,9 +19,16 @@ API.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response) {
-      // console.warn(error.response);
-      // console.log(error.response.data ? error.response.data.message : "");
+    const response = error.response;
+    if (response) {
+      if (response.status == 403) {
+        alert(response.data.message);
+        sessionStorage.setItem("xAuthToken", null);
+        window.location.href = "/login";
+      } else {
+        alert(response.data.message);
+        //return Promise.reject(error);
+      }
     }
   }
 );

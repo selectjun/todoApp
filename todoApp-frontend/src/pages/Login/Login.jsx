@@ -1,9 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import sha256 from "sha256";
 
 import { API } from "@components/axios";
 
 const Login = () => {
   const [loginData, setLoginData] = useState({id: "", password: ""});
+
+  useEffect(() => {
+    return () => {
+      if (sessionStorage.getItem("xAuthToken")) {
+        window.location.href = "/";
+      }
+    }
+  }, []);
 
   const handleLoginData = (type, value) => {
     setLoginData({
@@ -13,9 +22,9 @@ const Login = () => {
   }
 
   const submitLogin = () => {
-    const url = `/token/?id=${loginData.id}&password=${loginData.password}`;
+    const url = `/token/?id=${loginData.id}&password=${sha256(loginData.password)}`;
     API.post(url).then(res => {
-      window.location.reload();
+      window.location.href = "/";
     });
   }
 

@@ -14,8 +14,6 @@ const Main = () => {
       } else {
         alert("에러가 발상하였습니다.\n새로고침(F5) 후, 다시 시도해주세요.");
       }
-    }).catch(err => {
-        console.log(err);
     });
   }, []);
 
