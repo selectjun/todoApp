@@ -7,7 +7,7 @@ import {
   , Switch
 } from "react-router-dom";
 
-import Main from "./pages/Main";
+import MainContainer from "./container/MainContainer";
 import Login from "./pages/Login";
 import User from "./pages/User";
 
@@ -25,10 +25,10 @@ const App = ()=> {
 
   return(
     <Router>
-      <Header />
+      {/*<Header />*/}
       <>
         <Switch>
-          <Route path="/" component={Main} exact />
+          <Route path="/" component={MainContainer} exact />
           <Route path="/login" component={Login} />
           <Route path="/user" component={User} />
           <Redirect to="/" />
