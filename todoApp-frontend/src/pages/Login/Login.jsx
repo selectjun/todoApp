@@ -58,7 +58,11 @@ const Login = () => {
           id="password"
           placeholder="암호"
           value={loginData.password}
-          onKeyDown={e => e.key == "Enter" ? submitLogin() : false}
+          onKeyDown={e => {
+            if(e.key == "Enter") {
+              submitLogin();
+            }
+          }}
           onChange={e => handleLoginData("password", e.target.value)} />
           <br />
           <input

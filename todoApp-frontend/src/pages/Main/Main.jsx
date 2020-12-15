@@ -6,29 +6,48 @@ import { API } from "@components/axios";
 import "./main.scss"
 
 const Main = (props) => {
-  const [todoList, setTodoList] = useState(0);
+  const [todoCount, setTodoCount] = useState(0);
+  const [todo, setTodo] = useState({
+    todoId: null,
+    title: "",
+    createAt: null,
+    updateAt: null,
+    isComplete: false,
+    isDelete: false
+  });
 
   useEffect(() => {
     API.get("/todo/").then(res => {
       if (res.data.success) {
-        setTodoList(res.data.todoList);
+        res.data.todoList.map(todo => props.addTodo(todo));
       } else {
-        alert("에러가 발상하였습니다.\n새로고침(F5) 후, 다시 시도해주세요.");
+        alert("에러가 발생하였습니다.\n새로고침(F5) 후, 다시 시도해주세요.");
+      }
+    });
+    API.get("/todo/count/").then(res => {
+      if (res.data.success) {
+        setTodoCount(res.data.count);
+      } else {
+        alert("에러가 발생하였습니다.\n새로고침(F5) 후, 다시 시도해주세요.");
       }
     });
   }, []);
 
-  const submitTodo = () => {
-    const url = `/todo/?title=${props.title}`;
+  const decreaseTodoCount = () => {
+    setTodoCount(todoCount - 1);
+  }
+
+  const submitTodo = (target) => {
+    const url = `/todo/?title=${todo.title}`;
     API.post(url).then(res => {
       if (res.data.success) {
-        setTodoList([...todoList, {"title": todo.title, "todoId": res.data.todoId}]);
+        props.addTodo(todo);
+        setTodoCount(todoCount + 1);
+        target.value = "";
       } else {
-        alert("에러가 발상하였습니다.\n잠시 후, 다시 시도해주세요.");
+        alert("에러가 발생하였습니다.\n잠시 후, 다시 시도해주세요.");
       }
-    }).catch(err => {
-      console.log(err);
-    });
+    })
   }
 
   const handleTodo = (key, value) => {
@@ -46,24 +65,23 @@ const Main = (props) => {
           <input
             type="text"
             className="new-todo"
-            name=""
-            id=""
+            onChange={e => handleTodo("title", e.target.value)}
+            onKeyDown={e => {
+              if(e.key == "Enter") {
+                submitTodo(e.target);
+              }
+            }}
             placeholder="What needs to be done?" />
         </header>
         <section className="main">
-          <ul className="todo-list">
-            <li>
-              <div className="view">
-                <input type="checkbox" className="toggle" name="" id=""/>
-                <label htmlFor="">123</label>
-                <button className="destroy"></button>
-              </div>
-            </li>
-          </ul>
+          <TodoList
+            todoList={props.todoList}
+            deleteTodo={props.deleteTodo}
+            decreaseTodoCount={decreaseTodoCount} />
         </section>
         <footer className="footer">
           <span className="todo-count">
-            <strong>1</strong> item left
+            <strong>{todoCount}</strong> item left
           </span>
           <ul className="filters">
             <li>
@@ -78,20 +96,6 @@ const Main = (props) => {
           </ul>
           <button className="clear-completed">Clear completed</button>
         </footer>
-        {
-          /*<h1>Main...</h1>
-          <input
-            type="text"
-            value={props.title}
-            placeholder="할 일을 입력해주세요"
-            onChange={e => props.changeTitle(e.target.value)}
-            onKeyDown={e => {
-              if (e.key == "Enter") {
-                submitTodo();
-              }
-            }} />
-          <TodoList todoList={todoList} />*/
-        }
       </section>
     </div>
   );

@@ -4,13 +4,19 @@ import Todo from "./Todo";
 
 const TodoList = (props) => {
   return (
-    <ul>
+    <ul className="todo-list">
       {
         props.todoList
         ? props.todoList.map((todo, todoIndex) => {
-          return <Todo todo={todo} key={todoIndex} />;
+          return (
+            <Todo 
+              todo={todo}
+              key={todoIndex}
+              deleteTodo={props.deleteTodo}
+              decreaseTodoCount={props.decreaseTodoCount} />
+          );
         })
-        : <li>데이터가 존재하지 않습니다.</li>
+        : false
       }
     </ul>
   );

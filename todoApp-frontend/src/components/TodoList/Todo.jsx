@@ -7,24 +7,27 @@ const Todo = (props) => {
     console.log(todoId);
     const url = `/todo/${todoId}/delete/`;
     API.put(url).then(res => {
-      if (res.data.success) {
-        
-      } else {
-        alert("삭제하던 중, 에러가 발생하였습니다.");
-      }
-    })
+       if (res.data.success) {
+         props.deleteTodo(todoId);
+         props.decreaseTodoCount();
+       } else {
+         alert("삭제하던 중, 에러가 발생하였습니다.");
+       }
+    });
   }
 
   return (
-    <li>
-      {props.todo.title}
-      &nbsp;
-      <button 
-        style={{
-          color: "red",
-        }}
-        onClick={() => clickDeleteBtn(props.todo.todoId)}>삭제</button>
+    props.todo 
+    ? <li>
+      <div className="view">
+        <input type="checkbox" className="toggle" name="" id=""/>
+        <label htmlFor="">{props.todo.title}</label>
+        <button
+          className="destroy" 
+          onClick={() => clickDeleteBtn(props.todo.todoId)}></button>
+      </div>
     </li>
+    : false
   );
 }
 
