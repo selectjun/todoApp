@@ -20,7 +20,7 @@ const todoInsertValid = require("../validates/todo.insert.valid");
 /**
  * 페이지 당 게시물 수
  */
-const RECORDS_PER_PAGE = 2;
+const RECORDS_PER_PAGE = 20;
 
 /**
  * Auth Interceptor
@@ -46,6 +46,27 @@ router.get("/", (req, res) => {
       success: true,
       todoList: todoList
     });
+  }).catch(err => {
+    res.status(500).json({
+      success: false,
+      message: err
+    });
+  });
+});
+
+/**
+ * To Do 전체 개수 가져오기
+ */
+router.get("/count/", (req, res) => {
+  models.todo.count({
+    where: {
+      isDelete: false
+    }
+  }).then(count => {
+   res.status(200).json({
+     success: true,
+     count: count
+   });
   }).catch(err => {
     res.status(500).json({
       success: false,
