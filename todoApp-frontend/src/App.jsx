@@ -7,7 +7,7 @@ import {
   , Switch
 } from "react-router-dom";
 
-import MainContainer from "./container/MainContainer";
+import MainContainer from "./containers/MainContainer";
 import Login from "./pages/Login";
 import User from "./pages/User";
 
