@@ -164,6 +164,45 @@ router.put("/:todoId/", (req, res) => {
 });
 
 /**
+ * To Do 완료하기
+ */
+router.put("/:todoId/complete/", (req, res) => {
+  const todoId = req.params.todoId
+  
+  if (!todoId) {
+    res.status(400).json({
+      success: false,
+      message: "[todoId] 값이 존재하지 않습니다"
+    });
+  } else {
+    models.todo.findByPk(todoId).then(todo => {
+      models.todo.update({
+        isComplete: !todo.isComplete
+      }, {
+        where: {
+          todoId: todoId
+        }
+      }).then(() => {
+        res.status(200).json({
+          success: true,
+          todoId: todoId
+        });
+      }).catch(err => {
+        res.status(500).json({
+          success: false,
+          message: err
+        });
+      });
+    }).catch(err => {
+      res.status(500).json({
+        success: false,
+        message: err
+      });
+    });;
+  }
+});
+
+/**
  * To Do 삭제하기
  */
 router.put("/:todoId/delete/", (req, res, next) => {

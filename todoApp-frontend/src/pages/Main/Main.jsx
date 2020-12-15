@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 
 import TodoList from "@components/TodoList";
+import TodoFooter from "@components/TodoFooter";
+
 import { API } from "@components/axios";
 
 import "./main.scss"
@@ -16,7 +18,32 @@ const Main = (props) => {
     isDelete: false
   });
 
+  const handleTodo = (key, value) => {
+    setTodo({
+      ...todo,
+      [key]: [value]
+    });
+  };
+
+  const decreaseTodoCount = () => setTodoCount(todoCount - 1);
+  const increaceTodoCount = () => setTodoCount(todoCount + 1);
+
+  const submitTodo = (target) => {
+    const url = `/todo/?title=${todo.title}`;
+    API.post(url).then(res => {
+      if (res.data.success) {
+        handleTodo("todoId", res.data.todoId);
+        props.addTodo(todo);
+        increaceTodoCount();
+        target.value = "";
+      } else {
+        alert("에러가 발생하였습니다.\n잠시 후, 다시 시도해주세요.");
+      }
+    })
+  };
+
   useEffect(() => {
+    // To Do 목록 가져오기
     API.get("/todo/").then(res => {
       if (res.data.success) {
         res.data.todoList.map(todo => props.addTodo(todo));
@@ -24,6 +51,8 @@ const Main = (props) => {
         alert("에러가 발생하였습니다.\n새로고침(F5) 후, 다시 시도해주세요.");
       }
     });
+
+    // To Do 전체 갯수 가져오기
     API.get("/todo/count/").then(res => {
       if (res.data.success) {
         setTodoCount(res.data.count);
@@ -32,30 +61,6 @@ const Main = (props) => {
       }
     });
   }, []);
-
-  const decreaseTodoCount = () => {
-    setTodoCount(todoCount - 1);
-  }
-
-  const submitTodo = (target) => {
-    const url = `/todo/?title=${todo.title}`;
-    API.post(url).then(res => {
-      if (res.data.success) {
-        props.addTodo(todo);
-        setTodoCount(todoCount + 1);
-        target.value = "";
-      } else {
-        alert("에러가 발생하였습니다.\n잠시 후, 다시 시도해주세요.");
-      }
-    })
-  }
-
-  const handleTodo = (key, value) => {
-    setTodo({
-      ...todo,
-      [key]: [value]
-    });
-  }
 
   return (
     <div className="container">
@@ -73,29 +78,13 @@ const Main = (props) => {
             }}
             placeholder="What needs to be done?" />
         </header>
-        <section className="main">
-          <TodoList
-            todoList={props.todoList}
-            deleteTodo={props.deleteTodo}
-            decreaseTodoCount={decreaseTodoCount} />
-        </section>
-        <footer className="footer">
-          <span className="todo-count">
-            <strong>{todoCount}</strong> item left
-          </span>
-          <ul className="filters">
-            <li>
-              <a href="" className="selected">All</a>
-            </li>
-            <li>
-              <a href="">Active</a>
-            </li>
-            <li>
-              <a href="">Completed</a>
-            </li>
-          </ul>
-          <button className="clear-completed">Clear completed</button>
-        </footer>
+        <TodoList
+          todoList={props.todoList}
+          deleteTodo={props.deleteTodo}
+          completeTodo={props.completeTodo}
+          decreaseTodoCount={decreaseTodoCount} />
+        <TodoFooter
+          todoCount={todoCount} />
       </section>
     </div>
   );
