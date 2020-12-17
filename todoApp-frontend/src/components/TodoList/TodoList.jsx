@@ -3,6 +3,7 @@ import React from "react";
 import Todo from "./Todo";
 
 const TodoList = ({
+  filter,
   todoList,
   deleteTodo,
   completeTodo,
@@ -13,7 +14,11 @@ const TodoList = ({
       <ul className="todo-list">
         {
           todoList
-          ? todoList.map((todo, todoIndex) => {
+          ? todoList.filter(todo => {
+            if (filter == "ACTIVE") return !todo.isComplete
+            else if (filter == "COMPLETED") return todo.isComplete
+            else return true;
+          }).map((todo, todoIndex) => {
             return (
               <Todo 
                 todo={todo}

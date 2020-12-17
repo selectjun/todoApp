@@ -1,21 +1,43 @@
 import React from "react";
 
-const TodoFooter = (props) => {
+const TodoFooter = ({
+  filter,
+  todoCount,
+  onChangeFilter
+}) => {
   return (
-    props.todoCount
+    todoCount
     ? <footer className="footer">
       <span className="todo-count">
-        <strong>{props.todoCount}</strong> item left
+        <strong>{todoCount}</strong> item left
       </span>
       <ul className="filters">
         <li>
-          <a href="" className="selected">All</a>
+          <a
+            href="#ALL"
+            className={filter === "ALL" ? "selected" : null}
+            onClick={(e) => {
+              e.preventDefault();
+              onChangeFilter("ALL");
+            }}>All</a>
         </li>
         <li>
-          <a href="">Active</a>
+          <a
+            href="#ACTIVE"
+            className={filter === "ACTIVE" ? "selected" : null}
+            onClick={(e) => {
+              e.preventDefault();
+              onChangeFilter("ACTIVE");
+            }}>Active</a>
         </li>
         <li>
-          <a href="">Completed</a>
+          <a
+            href="#COMPLETED"
+            className={filter === "COMPLETED" ? "selected" : null}
+            onClick={(e) => {
+              e.preventDefault();
+              onChangeFilter("COMPLETED");
+            }}>Completed</a>
         </li>
       </ul>
       <button className="clear-completed">Clear completed</button>

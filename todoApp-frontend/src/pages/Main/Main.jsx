@@ -16,7 +16,8 @@ const initialState = {
     updateAt: null,
     isComplete: false,
     isDelete: false
-  }
+  },
+  filter: "ALL"
 }
 
 const reducer = (state, action) => {
@@ -60,6 +61,11 @@ const reducer = (state, action) => {
           [action.name]: action.value
         }
       }
+    case "CHANGE_FILTER":
+      return {
+        ...state,
+        filter: action.filter
+      }
     default:
       return state;
   }
@@ -82,10 +88,10 @@ const Main = ({
       value
     });
   });
-
   const onResetTitle = useCallback(() => dispatch({ type: "RESET_TITLE" }));
   const onIncreaseTodoCount = useCallback(() => dispatch({ type: "INCREASE_TODO_COUNT" }));
   const onDecreaseTodoCount = useCallback(() => dispatch({ type: "DECREASE_TODO_COUNT" }));
+  const onChangeFilter = useCallback((filter) => dispatch({ type: "CHANGE_FILTER", filter: filter }));
 
   const submitTodo = useCallback(e => {
     const url = `/todo/?title=${todo.title}`;
@@ -142,12 +148,15 @@ const Main = ({
             placeholder="What needs to be done?" />
         </header>
         <TodoList
+          filter={state.filter}
           todoList={todoList}
           deleteTodo={deleteTodo}
           completeTodo={completeTodo}
           onDecreaseTodoCount={onDecreaseTodoCount} />
         <TodoFooter
-          todoCount={todoCount} />
+          filter={state.filter}
+          todoCount={todoCount}
+          onChangeFilter={onChangeFilter} />
       </section>
     </div>
   );
