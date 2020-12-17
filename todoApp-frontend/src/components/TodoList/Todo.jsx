@@ -2,35 +2,39 @@ import React from "react";
 
 import { API } from "@components/axios";
 
-const Todo = (props) => {
-  const clickDeleteBtn = (todoId) => {
+const Todo = ({
+  todo,
+  deleteTodo,
+  completeTodo,
+  onDecreaseTodoCount
+}) => {
+  const onClickDeleteButton = (todoId) => {
     const url = `/todo/${todoId}/delete/`;
     API.put(url).then(res => {
        if (res.data.success) {
-         props.deleteTodo(todoId);
-         props.decreaseTodoCount();
+         deleteTodo(todoId);
+         onDecreaseTodoCount();
        } else {
-         alert("삭제하던 중, 에러가 발생하였습니다.");
+         alert("삭제하는 중, 에러가 발생하였습니다.");
        }
     });
   }
 
-  const clickCompleteBtn = (todoId, target) => {
+  const onClickCompleteButton = (todoId) => {
     const url = `/todo/${todoId}/complete/`;
     API.put(url).then(res => {
        if (res.data.success) {
-         props.completeTodo(props.todo.todoId);
-         target.parentNode.parentNode.classList.toggle("completed");
+         completeTodo(todo.todoId);
        } else {
-         alert("삭제하던 중, 에러가 발생하였습니다.");
+         alert("완료 처리하는 중, 에러가 발생하였습니다.");
        }
     });
   }
 
   return (
-    props.todo 
+    todo 
     ? <li className={
-        props.todo.isComplete
+        todo.isComplete
         ? "completed"
         : null
       }>
@@ -38,12 +42,12 @@ const Todo = (props) => {
         <input
           type="checkbox"
           className="toggle"
-          defaultChecked={props.todo.isComplete}
-          onClick={(e) => clickCompleteBtn(props.todo.todoId, e.target)} />
-        <label htmlFor="">{props.todo.title}</label>
+          defaultChecked={todo.isComplete}
+          onClick={(e) => onClickCompleteButton(todo.todoId)} />
+        <label htmlFor="">{todo.title}</label>
         <button
           className="destroy" 
-          onClick={() => clickDeleteBtn(props.todo.todoId)}></button>
+          onClick={() => onClickDeleteButton(todo.todoId)}></button>
       </div>
     </li>
     : false

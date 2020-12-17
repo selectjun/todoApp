@@ -2,20 +2,25 @@ import React from "react";
 
 import Todo from "./Todo";
 
-const TodoList = (props) => {
+const TodoList = ({
+  todoList,
+  deleteTodo,
+  completeTodo,
+  onDecreaseTodoCount
+}) => {
   return (
     <section className="main">
       <ul className="todo-list">
         {
-          props.todoList
-          ? props.todoList.map((todo, todoIndex) => {
+          todoList
+          ? todoList.map((todo, todoIndex) => {
             return (
               <Todo 
                 todo={todo}
                 key={todoIndex}
-                deleteTodo={props.deleteTodo}
-                completeTodo={props.completeTodo}
-                decreaseTodoCount={props.decreaseTodoCount} />
+                deleteTodo={deleteTodo}
+                completeTodo={completeTodo}
+                onDecreaseTodoCount={onDecreaseTodoCount} />
             );
           })
           : null
