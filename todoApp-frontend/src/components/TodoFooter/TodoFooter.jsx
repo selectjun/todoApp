@@ -3,6 +3,8 @@ import React from "react";
 const TodoFooter = ({
   filter,
   todoCount,
+  isClearCompleted,
+  clearCompleted,
   onChangeFilter
 }) => {
   return (
@@ -40,7 +42,13 @@ const TodoFooter = ({
             }}>Completed</a>
         </li>
       </ul>
-      <button className="clear-completed">Clear completed</button>
+      {
+        isClearCompleted
+        ? <button 
+            className="clear-completed"
+            onClick={clearCompleted}>Clear completed</button>
+        : null
+      }
     </footer>
     : null
   );

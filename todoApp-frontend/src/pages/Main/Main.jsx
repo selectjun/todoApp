@@ -78,7 +78,7 @@ const Main = ({
   completeTodo
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { todoCount, todo } = state;
+  const { todoCount, todo, filter } = state;
 
   const onChange = useCallback(e => {
     const { name, value } = e.target;
@@ -109,6 +109,20 @@ const Main = ({
       }
     })
   });
+
+  const clearCompleted = () => {
+    todoList.filter(todo => todo.isComplete).map(todo => {
+      const url = `/todo/${todo.todoId}/delete/`;
+      API.put(url).then(res => {
+        if (res.data.success) {
+          deleteTodo(todo.todoId);
+          onDecreaseTodoCount();
+        } else {
+          alert("삭제하는 중, 에러가 발생하였습니다.");
+        }
+      });
+    });
+  }
 
   useEffect(() => {
     // To Do 목록 가져오기
@@ -148,14 +162,16 @@ const Main = ({
             placeholder="What needs to be done?" />
         </header>
         <TodoList
-          filter={state.filter}
+          filter={filter}
           todoList={todoList}
           deleteTodo={deleteTodo}
           completeTodo={completeTodo}
           onDecreaseTodoCount={onDecreaseTodoCount} />
         <TodoFooter
-          filter={state.filter}
+          filter={filter}
           todoCount={todoCount}
+          isClearCompleted={todoCount - todoList.filter(todo => !todo.isComplete).length > 0}
+          clearCompleted={clearCompleted}
           onChangeFilter={onChangeFilter} />
       </section>
     </div>
