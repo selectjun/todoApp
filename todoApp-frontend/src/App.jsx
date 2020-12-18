@@ -25,7 +25,7 @@ const App = ()=> {
 
   return(
     <Router>
-      {/*<Header />*/}
+      <Header />
       <>
         <Switch>
           <Route path="/" component={MainContainer} exact />

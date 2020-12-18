@@ -17,7 +17,6 @@ const Login = () => {
   }, []);
 
   const handleLoginData = (type, value) => {
-    console.log(value);
     setLoginData({
       ...loginData,
       [type]: value

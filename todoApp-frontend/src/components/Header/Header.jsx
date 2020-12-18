@@ -1,9 +1,11 @@
 import React from "react";
 
+import "./header.scss"
+
 const Header = () => {
   return (
     <header>
-      <h1>Header Component...</h1>
+      <h1>todos</h1>
     </header>
   );
 }

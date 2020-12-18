@@ -1,5 +1,7 @@
 import React from "react";
 
+import "./todoFooter.scss"
+
 const TodoFooter = ({
   filter,
   todoCount,

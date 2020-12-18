@@ -3,6 +3,8 @@ import React from "react";
 import Todo from "./Todo";
 import Toggle from "./Toggle";
 
+import "./todoList.scss";
+
 const TodoList = ({
   filter,
   todoList,

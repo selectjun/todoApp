@@ -157,17 +157,14 @@ const Main = ({
   return (
     <div className="container">
       <section className="todoapp">
-        <header>
-          <h1>todos</h1>
-          <input
-            type="text"
-            name="title"
-            className="new-todo"
-            value={todo.title}
-            onChange={onChange}
-            onKeyDown={e => e.key === "Enter" ? submitTodo(e): false }
-            placeholder="What needs to be done?" />
-        </header>
+        <input
+          type="text"
+          name="title"
+          className="new-todo"
+          value={todo.title}
+          onChange={onChange}
+          onKeyDown={e => e.key === "Enter" ? submitTodo(e): false }
+          placeholder="What needs to be done?" />
         <TodoList
           filter={filter}
           todoList={todoList}
