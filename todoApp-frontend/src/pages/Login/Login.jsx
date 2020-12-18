@@ -37,25 +37,24 @@ const Login = () => {
   }
 
   return (
-    <div className="login-container">
-      <h2 className="login-title">LOGIN</h2>
-      <div className="login-box">
+    <div className="container">
+      <section className="login-box">
         <input 
           type="text"
-          className="inp-login"
+          className="login-inp"
           name="id"
           id="id"
-          placeholder="아이디"
+          placeholder="ID"
           value={loginData.id}
           onKeyDown={e => e.key == "Enter" ? submitLogin() : false}
           onChange={e => handleLoginData("id", e.target.value) } />
         <br />
         <input
           type="password"
-          className="inp-login"
+          className="login-inp"
           name="password"
           id="password"
-          placeholder="암호"
+          placeholder="PASSWORD"
           value={loginData.password}
           onKeyDown={e => {
             if(e.key == "Enter") {
@@ -64,17 +63,19 @@ const Login = () => {
           }}
           onChange={e => handleLoginData("password", e.target.value)} />
           <br />
-          <input
+          <button
             type="button"
-            className="inp-submit"
+            className="login-btn"
             value={"LOGIN"}
-            onClick={submitLogin} />
-      </div>
-      <div>
-        <a href="#">회원가입</a>
-        <br />
-        <a href="">아이디/암호 찾기</a>
-      </div>
+            onClick={submitLogin}>LOGIN</button>
+      </section>
+      {/*
+        <div>
+          <a href="#">회원가입</a>
+          <br />
+          <a href="">아이디/암호 찾기</a>
+        </div>
+      */}
     </div>
   );
 }
