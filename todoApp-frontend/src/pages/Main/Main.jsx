@@ -17,6 +17,7 @@ const initialState = {
     isComplete: false,
     isDelete: false
   },
+  currentIsCompleteAll: false,
   filter: "ALL"
 }
 
@@ -66,6 +67,11 @@ const reducer = (state, action) => {
         ...state,
         filter: action.filter
       }
+    case "CHANGE_CURRENT_IS_COMPLETE_ALL":
+      return {
+        ...state,
+        currentIsCompleteAll: !state.currentIsCompleteAll
+      }
     default:
       return state;
   }
@@ -92,6 +98,7 @@ const Main = ({
   const onIncreaseTodoCount = useCallback(() => dispatch({ type: "INCREASE_TODO_COUNT" }));
   const onDecreaseTodoCount = useCallback(() => dispatch({ type: "DECREASE_TODO_COUNT" }));
   const onChangeFilter = useCallback((filter) => dispatch({ type: "CHANGE_FILTER", filter: filter }));
+  const onChangeCurrentIsCompleteAll = useCallback(() => dispatch({ type: "CHANGE_CURRENT_IS_COMPLETE_ALL" }));
 
   const submitTodo = useCallback(e => {
     const url = `/todo/?title=${todo.title}`;
@@ -166,6 +173,8 @@ const Main = ({
           todoList={todoList}
           deleteTodo={deleteTodo}
           completeTodo={completeTodo}
+          currentIsCompleteAll={state.currentIsCompleteAll}
+          onChangeCurrentIsCompleteAll={onChangeCurrentIsCompleteAll}
           onDecreaseTodoCount={onDecreaseTodoCount} />
         <TodoFooter
           filter={filter}
