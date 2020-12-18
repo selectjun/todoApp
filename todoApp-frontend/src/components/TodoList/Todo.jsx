@@ -42,8 +42,8 @@ const Todo = ({
         <input
           type="checkbox"
           className="toggle"
-          defaultChecked={todo.isComplete}
-          onClick={(e) => onClickCompleteButton(todo.todoId)} />
+          checked={todo.isComplete}
+          onChange={(e) => onClickCompleteButton(todo.todoId)} />
         <label htmlFor="">{todo.title}</label>
         <button
           className="destroy" 
