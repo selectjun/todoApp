@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 
 import { API } from "@components/axios";
 
@@ -8,7 +8,7 @@ const Todo = ({
   completeTodo,
   onDecreaseTodoCount
 }) => {
-  const onClickDeleteButton = (todoId) => {
+  const onClickDeleteButton = useCallback((todoId) => {
     const url = `/todo/${todoId}/delete/`;
     API.put(url).then(res => {
        if (res.data.success) {
@@ -18,9 +18,9 @@ const Todo = ({
          alert("삭제하는 중, 에러가 발생하였습니다.");
        }
     });
-  }
+  });
 
-  const onClickCompleteButton = (todoId) => {
+  const onClickCompleteButton = useCallback((todoId) => {
     const url = `/todo/${todoId}/complete/`;
     API.put(url).then(res => {
        if (res.data.success) {
@@ -29,21 +29,17 @@ const Todo = ({
          alert("완료 처리하는 중, 에러가 발생하였습니다.");
        }
     });
-  }
+  });
 
   return (
     todo 
-    ? <li className={
-        todo.isComplete
-        ? "completed"
-        : null
-      }>
+    ? <li className={todo.isComplete ? "completed" : null}>
       <div className="view">
         <input
           type="checkbox"
           className="toggle"
           checked={todo.isComplete}
-          onChange={(e) => onClickCompleteButton(todo.todoId)} />
+          onChange={() => onClickCompleteButton(todo.todoId)} />
         <label htmlFor="">{todo.title}</label>
         <button
           className="destroy" 

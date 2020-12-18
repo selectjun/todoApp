@@ -1,8 +1,7 @@
 import React from "react";
 
 import Todo from "./Todo";
-
-import { API } from "@components/axios";
+import Toggle from "./Toggle";
 
 const TodoList = ({
   filter,
@@ -16,29 +15,11 @@ const TodoList = ({
   return (
     <section className="main">
       <ul className="todo-list">
-        <input
-          type="checkbox"
-          id="toggle-all"
-          checked={todoList.length === todoList.filter(todo => todo.isComplete).length}
-          className="toggle-all"
-          onChange={() => {
-            todoList.map(todo => {
-              if (!todo.isComplete === currentIsCompleteAll
-                  || todoList.length === todoList.filter(todo => !todo.isComplete).length
-                  || todoList.length === todoList.filter(todo => todo.isComplete).length) {
-                const url = `/todo/${todo.todoId}/complete/`;
-                API.put(url).then(res => {
-                  if (res.data.success) {
-                    completeTodo(todo.todoId);
-                  } else {
-                    alert("완료 처리하는 중, 에러가 발생하였습니다.");
-                  }
-                });
-              }
-            });
-            onChangeCurrentIsCompleteAll();
-          }} />
-        <label htmlFor="toggle-all">Mark all as completed</label>
+        <Toggle
+          todoList={todoList}
+          completeTodo={completeTodo}
+          currentIsCompleteAll={currentIsCompleteAll}
+          onChangeCurrentIsCompleteAll={onChangeCurrentIsCompleteAll} />
         {
           todoList
           ? todoList.filter(todo => {
