@@ -69,13 +69,11 @@ const Login = () => {
             value={"LOGIN"}
             onClick={submitLogin}>LOGIN</button>
       </section>
-      {/*
-        <div>
-          <a href="#">회원가입</a>
-          <br />
-          <a href="">아이디/암호 찾기</a>
-        </div>
-      */}
+      <div className="user-box">
+        <a href="#">회원가입</a>
+        <br />
+        <a href="#">아이디/암호 찾기</a>
+      </div>
     </div>
   );
 }

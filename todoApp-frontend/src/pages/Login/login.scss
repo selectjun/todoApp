@@ -22,8 +22,17 @@
 			font-style: italic;
 			font-weight: 300;
 			color: #e6e6e6;
-		}
+    }
 	}
+    
+  .user-box {
+    text-align: center;
+    line-height: 2em;
+
+    a {
+      color: #000;
+    }
+  }
 }
 
 .login-inp
