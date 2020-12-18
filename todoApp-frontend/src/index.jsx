@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
+import { composeWithDevTools } from "redux-devtools-extension";
 
 import rootReducer from "./store/modules"
 
@@ -11,7 +12,7 @@ import "./common.scss";
 import App from "./App";
 import Login from "./pages/Login";
 
-const store = createStore(rootReducer);
+const store = createStore(rootReducer, composeWithDevTools());
 console.log(store.getState());
 
 if (sessionStorage.getItem("xAuthToken")) {
