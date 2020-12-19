@@ -9,7 +9,7 @@ $ git clone https://github.com/selectjun/todoApp.git
 
 ## 안내
 - 반드시 Frontend, Backend 각각 기동을 시켜주셔야 합니다.
-
+- 기본적인 틀(디자인)은 [http://todomvc.com](http://todomvc.com)을 참고하였고, 그 외 기능은 React.js 학습을 위해 참고하지 않았다.
 
 <br />
 
@@ -115,6 +115,7 @@ Child HtmlWebpackCompiler:
     [./node_modules/html-webpack-plugin/lib/loader.js!./public/index.html] 297 bytes {HtmlWebpackPlugin_0} [built]
 ℹ ｢wdm｣: Compiled successfully.
 ```
+<br />
 
-### 사이트 접속
+## 사이트 접속
 - [http://localhost:9000/login](http://localhost:9000/login)로 접속
