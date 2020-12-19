@@ -15,21 +15,12 @@ import User from "./pages/User";
 import Header from "./components/Header"
 
 const App = ()=> {
-  const renderRoute = (Component) => {
-    return (props) => {
-      const newProps = {
-        ...props,
-      };
-      return <Component {...newProps} />;
-    };
-  };
-
   return(
     <Router>
         <Header />
         <>
           <Switch>
-            <Route path="/" component={MainContainer} exact />
+            <Route path="/todo" component={MainContainer} />
             <Route path="/login" component={Login} />
             <Route path="/join" component={Join} />
             <Route path="/user" component={User} />

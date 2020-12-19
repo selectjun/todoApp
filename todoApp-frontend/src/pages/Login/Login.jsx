@@ -33,7 +33,7 @@ const Login = () => {
     } else {
       const url = `/token/?id=${loginData.id}&password=${sha256(loginData.password)}`;
       API.post(url).then(res => {
-        window.location.href = "/";
+        window.location.href = "/todo";
       });
     }
   }
