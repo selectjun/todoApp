@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
 import sha256 from "sha256";
 
 import { API } from "@components/axios";
@@ -54,7 +56,7 @@ const Login = () => {
           className="login-inp"
           name="password"
           id="password"
-          placeholder="PASSWORD"
+          placeholder="Password"
           value={loginData.password}
           onKeyDown={e => {
             if(e.key == "Enter") {
@@ -66,11 +68,10 @@ const Login = () => {
           <button
             type="button"
             className="login-btn"
-            value={"LOGIN"}
             onClick={submitLogin}>LOGIN</button>
       </section>
       <div className="user-box">
-        <a href="#">회원가입</a>
+        <a href="/join">회원가입</a>
         <br />
         <a href="#">아이디/암호 찾기</a>
       </div>
