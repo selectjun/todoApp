@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 
+import Aside from "@components/Aside"
 import TodoList from "@components/TodoList";
 import TodoFooter from "@components/TodoFooter";
 
@@ -86,7 +87,7 @@ const Main = ({
   const [state, dispatch] = useReducer(reducer, initialState);
   const { todoCount, todo, filter } = state;
 
-  const onChange = useCallback(e => {
+  const onChange = useCallback((e) => {
     const { name, value } = e.target;
     dispatch({
       type: "CHANGE_INPUT",
@@ -100,7 +101,7 @@ const Main = ({
   const onChangeFilter = useCallback((filter) => dispatch({ type: "CHANGE_FILTER", filter: filter }));
   const onChangeCurrentIsCompleteAll = useCallback(() => dispatch({ type: "CHANGE_CURRENT_IS_COMPLETE_ALL" }));
 
-  const submitTodo = useCallback(e => {
+  const submitTodo = useCallback(() => {
     const url = `/todo/?title=${todo.title}`;
     API.post(url).then(res => {
       if (res.data.success) {
@@ -156,6 +157,7 @@ const Main = ({
 
   return (
     <div className="container">
+      <Aside />
       <section className="todoapp">
         <input
           type="text"

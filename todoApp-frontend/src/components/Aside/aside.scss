@@ -1,0 +1,20 @@
+$aside-default-width: 48px;
+
+.aside {
+    height: 100%;
+    width: $aside-default-width;
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
+                0 25px 50px 0 rgba(0, 0, 0, 0.1);
+    
+    ul {
+      position: absolute;
+      
+      &:nth-child(2) {
+        bottom: 0;
+      }
+    }
+}

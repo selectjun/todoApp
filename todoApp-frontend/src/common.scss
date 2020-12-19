@@ -1,7 +1,22 @@
+$aside-default-width: 48px;
+
 * {
   box-sizing: border-box;
 }
 
-body {
+html, body {
   background-color: #f0f2f5;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  #root {
+    width: 100%;
+    height: 100%;
+
+    .wrapper {
+      margin-left: $aside-default-width;
+    }
+  }
 }
