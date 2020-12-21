@@ -12,12 +12,9 @@ import Login from "./pages/Login";
 import Join from "./pages/Join";
 import User from "./pages/User";
 
-import Header from "./components/Header"
-
 const App = ()=> {
   return(
     <Router>
-        <Header />
         <>
           <Switch>
             <Route path="/todo" component={MainContainer} />

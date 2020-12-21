@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 
 import sha256 from "sha256";
 
+import Header from "@components/Header"
 import { API } from "@components/axios";
 
 import "./login.scss"
@@ -39,8 +39,9 @@ const Login = () => {
   }
 
   return (
-    <div className="container">
-      <section className="login-box">
+    <div className="container login">
+      <Header />
+      <section className="contents">
         <input 
           type="text"
           className="login-inp"

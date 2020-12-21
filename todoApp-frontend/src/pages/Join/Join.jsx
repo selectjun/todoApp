@@ -1,11 +1,14 @@
 import React from "react";
 
+import Header from "@components/Header"
+
 import "./join.scss"
 
 const Join = () => {
   return (
-    <div className="container">
-      <section className="join-box">
+    <div className="container join">
+      <Header />
+      <section className="contents">
         <input
           type="text"
           className="login-inp top-line"

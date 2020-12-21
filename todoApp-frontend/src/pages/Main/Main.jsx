@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 
 import Aside from "@components/Aside"
+import Header from "@components/Header"
 import TodoList from "@components/TodoList";
 import TodoFooter from "@components/TodoFooter";
 
@@ -156,9 +157,10 @@ const Main = ({
   }, []);
 
   return (
-    <div className="container">
+    <div className="container todoapp">
       <Aside />
-      <section className="todoapp">
+      <Header />
+      <section className="contents">
         <input
           type="text"
           name="title"
