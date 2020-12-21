@@ -15,6 +15,11 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    userId: {
+      field: "USER_ID",
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     createAt: {
       field: "CREATE_AT",
       type: DataTypes.DATE,

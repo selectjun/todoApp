@@ -28,16 +28,25 @@ const RECORDS_PER_PAGE = 20;
 router.all("/*", auth);
 
 /**
+ * JWT Provider
+ */
+const jwtProvider = require("../utils/security/jwt-provider.util");
+
+/**
  * To Do 목록 가져오기
  */
 router.get("/", (req, res) => {
   const page = (!isNaN(req.query.page) && req.query.page > 0) ? req.query.page : 1;
   const limit = RECORDS_PER_PAGE;
   const offset = RECORDS_PER_PAGE * (page - 1);
+  
+  const token = jwtProvider.resolveToken(req);
+  const userId = jwtProvider.getUserPk(token);
 
   models.todo.findAll({
     where: {
-      isDelete: false
+      isDelete: false,
+      userId: userId
     },
     limit: limit,
     offset: offset
@@ -58,9 +67,13 @@ router.get("/", (req, res) => {
  * To Do 전체 개수 가져오기
  */
 router.get("/count/", (req, res) => {
+  const token = jwtProvider.resolveToken(req);
+  const userId = jwtProvider.getUserPk(token);
+
   models.todo.count({
     where: {
-      isDelete: false
+      isDelete: false,
+      userId: userId
     }
   }).then(count => {
    res.status(200).json({
@@ -111,6 +124,10 @@ router.get("/:todoId/", (req, res) => {
  */
 router.post("/", todoInsertValid, (req, res) => {
   const valid = validationResult(req);
+
+  const token = jwtProvider.resolveToken(req);
+  const userId = jwtProvider.getUserPk(token);
+  req.query.userId = userId;
 
   if (!valid.isEmpty()) {
     res.status(400).json({
@@ -205,7 +222,7 @@ router.put("/:todoId/complete/", (req, res) => {
 /**
  * To Do 삭제하기
  */
-router.put("/:todoId/delete/", (req, res, next) => {
+router.put("/:todoId/delete/", (req, res) => {
   const todoId = req.params.todoId;
 
   if (!todoId) {
