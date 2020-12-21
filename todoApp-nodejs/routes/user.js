@@ -12,6 +12,8 @@ const { models } = require('../sequelize');
  */
 const userInsertValid = require("../validates/user.insert.valid");
 
+const aes256 = require("../utils/security/aes256.util");
+
 /**
  * 사용자 등록
  */
@@ -36,6 +38,7 @@ router.post("/", userInsertValid, (req, res, next) => {
           message: "이미 등록된 계정이 있습니다"
         });
       } else {
+        req.query.email = aes256.encrypt(req.query.email);
         next();
       }
     }).catch(err => {
