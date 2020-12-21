@@ -1,9 +1,14 @@
 import React from "react"
 
+import Aside from "@components/Aside"
+import Header from "@components/Header"
+
 const User = () => {
   return (
-    <div>
-      <h1>User Page...</h1>
+    <div className="container todoapp">
+      <Aside />
+      <Header />
+      <div>User Page...</div>
     </div>
   );
 }
