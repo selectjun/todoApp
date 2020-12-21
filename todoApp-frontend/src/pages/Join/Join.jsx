@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import sha256 from "sha256";
 
 import Header from "@components/Header"
@@ -17,7 +17,6 @@ const initialState = {
 }
 
 const reducer = (state, action) => {
-  console.log(state);
   switch (action.type) {
     case "CHANGE_INPUT":
       return {
@@ -31,6 +30,8 @@ const reducer = (state, action) => {
 
 const Join = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => { }, [state]);
 
   const handleJoinData = (e) => {
     const { name, value } = e.target;
@@ -78,7 +79,6 @@ const Join = () => {
         }
       });
     }
-
   }
 
   return (

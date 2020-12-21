@@ -36,7 +36,7 @@ router.post("/", userInsertValid, (req, res, next) => {
       }
     }).then(count => {
       if (count > 0) {
-        res.status(200).json({
+        res.status(400).json({
           success: false,
           message: "이미 등록된 ID가 있습니다"
         });
