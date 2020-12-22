@@ -6,7 +6,8 @@ const Todo = ({
   todo,
   deleteTodo,
   completeTodo,
-  onDecreaseTodoCount
+  onDecreaseTodoCount,
+  onClickOpenModal
 }) => {
   const onClickDeleteButton = useCallback((todoId) => {
     const url = `/todo/${todoId}/delete/`;
@@ -40,7 +41,9 @@ const Todo = ({
           className="toggle"
           checked={todo.isComplete}
           onChange={() => onClickCompleteButton(todo.todoId)} />
-        <label htmlFor="">{todo.title}</label>
+        <label
+          htmlFor=""
+          onClick={() => onClickOpenModal(todo.todoId)}>{todo.title}</label>
         <button
           className="destroy" 
           onClick={() => onClickDeleteButton(todo.todoId)}></button>

@@ -12,7 +12,8 @@ const TodoList = ({
   completeTodo,
   currentIsCompleteAll,
   onChangeCurrentIsCompleteAll,
-  onDecreaseTodoCount
+  onDecreaseTodoCount,
+  onClickOpenModal
 }) => {
   return (
     <section className="main">
@@ -35,7 +36,8 @@ const TodoList = ({
                 key={todoIndex}
                 deleteTodo={deleteTodo}
                 completeTodo={completeTodo}
-                onDecreaseTodoCount={onDecreaseTodoCount} />
+                onDecreaseTodoCount={onDecreaseTodoCount}
+                onClickOpenModal={onClickOpenModal} />
             );
           })
           : null

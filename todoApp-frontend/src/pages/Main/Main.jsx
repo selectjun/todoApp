@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useReducer } from "react";
+import React, { useCallback, useEffect, useState, useReducer } from "react";
+import Modal from "react-modal";
 
 import Aside from "@components/Aside"
 import Header from "@components/Header"
@@ -79,6 +80,18 @@ const reducer = (state, action) => {
   }
 }
 
+const customStyles = {
+  content : {
+    top                   : '50%',
+    left                  : '50%',
+    right                 : 'auto',
+    bottom                : 'auto',
+    marginRight           : '-50%',
+    transform             : 'translate(-50%, -50%)'
+  }
+};
+
+Modal.setAppElement('#root');
 const Main = ({
   todoList,
   addTodo,
@@ -87,6 +100,8 @@ const Main = ({
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { todoCount, todo, filter } = state;
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [todoId, setTodoId] = useState(null);
 
   const onChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -156,8 +171,32 @@ const Main = ({
     });
   }, []);
 
+  useEffect(() => {
+    if (modalIsOpen === true) {
+      const url = `/todo/${todoId}/`
+      API.get(url).then((res) => {
+        console.log(res.data);
+      });
+    }
+  }, [modalIsOpen, todoId]);
+
+  const onClickOpenModal = (todoId) => {
+    setModalIsOpen(true);
+    setTodoId(todoId);
+  }
+
+  const onClickCloseModal = () => {
+    setModalIsOpen(false);
+    setTodoId(null);
+  }
+
   return (
     <div className="container todoapp">
+      <Modal
+        isOpen={modalIsOpen}
+        style={customStyles}
+        contentLabel="Example Modal"
+      >Test...<span onClick={onClickCloseModal} style={{"color": "red"}}>X</span></Modal>
       <Aside />
       <Header />
       <section className="contents">
@@ -176,7 +215,8 @@ const Main = ({
           completeTodo={completeTodo}
           currentIsCompleteAll={state.currentIsCompleteAll}
           onChangeCurrentIsCompleteAll={onChangeCurrentIsCompleteAll}
-          onDecreaseTodoCount={onDecreaseTodoCount} />
+          onDecreaseTodoCount={onDecreaseTodoCount}
+          onClickOpenModal={onClickOpenModal} />
         <TodoFooter
           filter={filter}
           todoCount={todoCount}
