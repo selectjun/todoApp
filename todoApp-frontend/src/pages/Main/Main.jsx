@@ -60,7 +60,6 @@ const reducer = (state, action) => {
         }
       }
     case "SET_TODO":
-      console.log(action.todo);
       return {
         ...state,
         todo: action.todo
@@ -104,23 +103,6 @@ const reducer = (state, action) => {
   }
 }
 
-const customStyles = {
-  overlay: {
-    background: "rgba(0, 0, 0, 0.7)",
-    zIndex: 1000
-  },
-  content : {
-    width: "100%",
-    maxWidth: "720px",
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)'
-  }
-};
-
 const Main = ({
   todoList,
   addTodo,
@@ -129,10 +111,12 @@ const Main = ({
   updateTodo
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { todoCount, input, filter } = state;
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [todoId, setTodoId] = useState(null);
 
+  const { todoCount, input, todo, filter, currentIsCompleteAll } = state;
+  
+  // 입력 데이터 변경 처리
   const onChangeInput = useCallback((e) => {
     const { name, value } = e.target;
     dispatch({
@@ -141,6 +125,8 @@ const Main = ({
       value
     });
   });
+
+  // 수정 데이터 변경 처리
   const onChangeTodo = useCallback((e) => {
     const { name, value } = e.target;
     dispatch({
@@ -149,30 +135,43 @@ const Main = ({
       value
     });
   });
+
+  // 제목 초기화
   const onResetTitle = useCallback(() => dispatch({ type: "RESET_TITLE" }));
+
+  // 갯수 증가
   const onIncreaseTodoCount = useCallback(() => dispatch({ type: "INCREASE_TODO_COUNT" }));
+
+  // 갯수 감소
   const onDecreaseTodoCount = useCallback(() => dispatch({ type: "DECREASE_TODO_COUNT" }));
-  const onChangeFilter = useCallback((filter) => dispatch({ type: "CHANGE_FILTER", filter: filter }));
+
+  // 필터 처리
+  const onChangeFilter = useCallback((filter) => dispatch({ type: "CHANGE_FILTER", filter }));
+
+  // 토글 처리
   const onChangeCurrentIsCompleteAll = useCallback(() => dispatch({ type: "CHANGE_CURRENT_IS_COMPLETE_ALL" }));
 
+  // 기본키 등록
+  const onSetTodoId = useCallback((todoId) => dispatch({ type: "SET_TODO_ID", todoId}));
+
+  // 수정 팝업 열기
   const onClickOpenModal = (todoId) => {
     setModalIsOpen(true);
     setTodoId(todoId);
   }
 
+  // 수정 팝업 닫기
   const onClickCloseModal = () => {
     setModalIsOpen(false);
     setTodoId(null);
   }
 
+  // To Do 추가
   const onSubmitTodo = useCallback(() => {
     const url = `/todo/?title=${input.title}`;
     API.post(url).then(res => {
       if (res.data.success) {
-        dispatch({
-          type: "SET_TODO_ID",
-          todoId: res.data.todoId
-        });
+        onSetTodoId(res.data.todoId);
         addTodo(state.input);
         onIncreaseTodoCount();
         onResetTitle();
@@ -182,12 +181,13 @@ const Main = ({
     })
   });
 
+  // To Do 수정
   const onSubmitModifyTodo = useCallback(() => {
     if (confirm("수정하시겠습니까?")) {
-      const url = `/todo/${state.todo.todoId}/?title=${state.todo.title}&isComplete=${state.todo.isComplete}&contents=${state.todo.contents}`;
+      const url = `/todo/${todo.todoId}/?title=${todo.title}&isComplete=${todo.isComplete}&contents=${todo.contents}`;
       API.put(url).then(res => {
         if (res.data.success) {
-          updateTodo(state.todo);
+          updateTodo(todo);
           onClickCloseModal();
         } else {
           alert("에러가 발생하였습니다.\n잠시 후, 다시 시도해주세요.");
@@ -196,6 +196,7 @@ const Main = ({
     }
   });
 
+  // 완료된 To Do 일괄 삭제 처리
   const clearCompleted = () => {
     todoList.filter(todo => todo.isComplete).map(todo => {
       const url = `/todo/${todo.todoId}/delete/`;
@@ -210,6 +211,7 @@ const Main = ({
     });
   }
 
+  // 초기화
   useEffect(() => {
     // To Do 목록 가져오기
     API.get("/todo/").then(res => {
@@ -233,6 +235,7 @@ const Main = ({
     });
   }, []);
 
+  // 수정 팝업 데이터 불러오기
   useEffect(() => {
     if (modalIsOpen === true) {
       const url = `/todo/${todoId}/`
@@ -247,38 +250,6 @@ const Main = ({
 
   return (
     <div className="container todoapp">
-      <Modal
-        isOpen={modalIsOpen}
-        style={customStyles}
-        ariaHideApp={false}
-        parentSelector={() => document.querySelector('#root')}
-        contentLabel="Example Modal">
-        <div className="todo-popup">
-          <input
-            type="text"
-            name="title"
-            className="title"
-            value={state.todo.title}
-            onChange={onChangeTodo} />
-          <dl>
-            <dt>Created</dt>
-            <dd>{state.todo.createAt}</dd>
-            <dt>Complete or Not</dt>
-            <dd>{state.todo.isComplete ? "Y" : "N"}</dd>
-            <dt>Content</dt>
-            <dd>
-              <textarea
-                name="contents"
-                cols="30" 
-                rows="10"
-                value={state.todo.contents ? state.todo.contents : ""}
-                onChange={onChangeTodo}></textarea>
-            </dd>
-          </dl>
-          <button type="button" onClick={onClickCloseModal}>취소</button>
-          <button type="button" onClick={onSubmitModifyTodo}>수정</button>
-        </div>
-      </Modal>
       <Aside />
       <Header />
       <section className="contents">
@@ -295,7 +266,7 @@ const Main = ({
           todoList={todoList}
           deleteTodo={deleteTodo}
           completeTodo={completeTodo}
-          currentIsCompleteAll={state.currentIsCompleteAll}
+          currentIsCompleteAll={currentIsCompleteAll}
           onChangeCurrentIsCompleteAll={onChangeCurrentIsCompleteAll}
           onDecreaseTodoCount={onDecreaseTodoCount}
           onClickOpenModal={onClickOpenModal} />
@@ -306,6 +277,67 @@ const Main = ({
           clearCompleted={clearCompleted}
           onChangeFilter={onChangeFilter} />
       </section>
+
+      {/* 수정 팝업 */}
+      <Modal
+        isOpen={modalIsOpen}
+        style={{
+          overlay: {
+            background: "rgba(0, 0, 0, 0.7)",
+            zIndex: 1000
+          },
+          content : {
+            width: "100%",
+            maxWidth: "720px",
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)'
+          }
+        }}
+        ariaHideApp={false}
+        parentSelector={() => document.querySelector('#root')}
+        contentLabel="Example Modal">
+        <div className="todo-popup">
+          <input
+            type="text"
+            name="title"
+            className="title"
+            value={todo.title}
+            onChange={onChangeTodo} />
+          <dl>
+            <dt>생성 일자</dt>
+            <dd>{todo.createAt}</dd>
+            <dt>완료 여부</dt>
+            <dd>{todo.isComplete ? "Y" : "N"}</dd>
+            <dt>내용</dt>
+            <dd>
+              <textarea
+                name="contents"
+                cols="30" 
+                rows="10"
+                value={todo.contents ? todo.contents : ""}
+                onChange={onChangeTodo}></textarea>
+            </dd>
+            <dt>첨부 파일</dt>
+            <dd>
+              <input type="file" name="" id=""/>
+            </dd>
+          </dl>
+          <div className="button-group right">
+            <button
+              type="button"
+              className="button cancel"
+              onClick={onClickCloseModal}>취소</button>
+            <button
+              type="button"
+              className="button submit"
+              onClick={onSubmitModifyTodo}>수정</button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
