@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 
 import Main from "../pages/Main";
-import { addTodo, deleteTodo, completeTodo } from "../store/modules/todoList";
+import { addTodo, deleteTodo, completeTodo, updateTodo } from "../store/modules/todoList";
 
 // props 로 넣어줄 스토어 상태값
 const mapStateToProps = state => ({
@@ -14,6 +14,7 @@ const mapDispatchToProps = dispatch => ({
   addTodo: todo => dispatch(addTodo(todo)),
   deleteTodo: todoId => dispatch(deleteTodo(todoId)),
   completeTodo: todoId => dispatch(completeTodo(todoId)),
+  updateTodo: todo => dispatch(updateTodo(todo)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(props =>
@@ -21,5 +22,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(props =>
     todoList={props.todoList}
     addTodo={props.addTodo}
     deleteTodo={props.deleteTodo}
-    completeTodo={props.completeTodo} />
+    completeTodo={props.completeTodo}
+    updateTodo={props.updateTodo} />
 );

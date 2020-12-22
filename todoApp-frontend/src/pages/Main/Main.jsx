@@ -12,9 +12,19 @@ import "./main.scss"
 
 const initialState = {
   todoCount: 0,
+  input: {
+    todoId: "",
+    title: "",
+    contents: "",
+    createAt: null,
+    updateAt: null,
+    isComplete: false,
+    isDelete: false
+  },
   todo: {
     todoId: "",
     title: "",
+    contents: "",
     createAt: null,
     updateAt: null,
     isComplete: false,
@@ -44,27 +54,41 @@ const reducer = (state, action) => {
     case "SET_TODO_ID":
       return {
         ...state,
-        todo: {
-          ...state.todo,
+        input: {
+          ...state.input,
           todoId: action.todoId
         }
+      }
+    case "SET_TODO":
+      console.log(action.todo);
+      return {
+        ...state,
+        todo: action.todo
       }
     case "RESET_TITLE":
       return {
         ...state,
-        todo: {
-          ...state.todo,
+        input: {
+          ...state.input,
           title: ""
         }
       }
     case "CHANGE_INPUT":
       return {
         ...state,
-        todo: {
-          ...state.todo,
+        input: {
+          ...state.input,
           [action.name]: action.value
         }
       }
+      case "CHANGE_TODO":
+        return {
+          ...state,
+          todo: {
+            ...state.todo,
+            [action.name]: action.value
+          }
+        }
     case "CHANGE_FILTER":
       return {
         ...state,
@@ -81,32 +105,46 @@ const reducer = (state, action) => {
 }
 
 const customStyles = {
+  overlay: {
+    background: "rgba(0, 0, 0, 0.7)",
+    zIndex: 1000
+  },
   content : {
-    top                   : '50%',
-    left                  : '50%',
-    right                 : 'auto',
-    bottom                : 'auto',
-    marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)'
+    width: "100%",
+    maxWidth: "720px",
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)'
   }
 };
 
-Modal.setAppElement('#root');
 const Main = ({
   todoList,
   addTodo,
   deleteTodo,
-  completeTodo
+  completeTodo,
+  updateTodo
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { todoCount, todo, filter } = state;
+  const { todoCount, input, filter } = state;
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [todoId, setTodoId] = useState(null);
 
-  const onChange = useCallback((e) => {
+  const onChangeInput = useCallback((e) => {
     const { name, value } = e.target;
     dispatch({
       type: "CHANGE_INPUT",
+      name,
+      value
+    });
+  });
+  const onChangeTodo = useCallback((e) => {
+    const { name, value } = e.target;
+    dispatch({
+      type: "CHANGE_TODO",
       name,
       value
     });
@@ -117,21 +155,45 @@ const Main = ({
   const onChangeFilter = useCallback((filter) => dispatch({ type: "CHANGE_FILTER", filter: filter }));
   const onChangeCurrentIsCompleteAll = useCallback(() => dispatch({ type: "CHANGE_CURRENT_IS_COMPLETE_ALL" }));
 
-  const submitTodo = useCallback(() => {
-    const url = `/todo/?title=${todo.title}`;
+  const onClickOpenModal = (todoId) => {
+    setModalIsOpen(true);
+    setTodoId(todoId);
+  }
+
+  const onClickCloseModal = () => {
+    setModalIsOpen(false);
+    setTodoId(null);
+  }
+
+  const onSubmitTodo = useCallback(() => {
+    const url = `/todo/?title=${input.title}`;
     API.post(url).then(res => {
       if (res.data.success) {
         dispatch({
           type: "SET_TODO_ID",
           todoId: res.data.todoId
         });
-        addTodo(state.todo);
+        addTodo(state.input);
         onIncreaseTodoCount();
         onResetTitle();
       } else {
         alert("에러가 발생하였습니다.\n잠시 후, 다시 시도해주세요.");
       }
     })
+  });
+
+  const onSubmitModifyTodo = useCallback(() => {
+    if (confirm("수정하시겠습니까?")) {
+      const url = `/todo/${state.todo.todoId}/?title=${state.todo.title}&isComplete=${state.todo.isComplete}&contents=${state.todo.contents}`;
+      API.put(url).then(res => {
+        if (res.data.success) {
+          updateTodo(state.todo);
+          onClickCloseModal();
+        } else {
+          alert("에러가 발생하였습니다.\n잠시 후, 다시 시도해주세요.");
+        }
+      });
+    }
   });
 
   const clearCompleted = () => {
@@ -175,28 +237,48 @@ const Main = ({
     if (modalIsOpen === true) {
       const url = `/todo/${todoId}/`
       API.get(url).then((res) => {
-        console.log(res.data);
+        dispatch({
+          type: "SET_TODO",
+          todo: res.data.todo
+        });
       });
     }
   }, [modalIsOpen, todoId]);
-
-  const onClickOpenModal = (todoId) => {
-    setModalIsOpen(true);
-    setTodoId(todoId);
-  }
-
-  const onClickCloseModal = () => {
-    setModalIsOpen(false);
-    setTodoId(null);
-  }
 
   return (
     <div className="container todoapp">
       <Modal
         isOpen={modalIsOpen}
         style={customStyles}
-        contentLabel="Example Modal"
-      >Test...<span onClick={onClickCloseModal} style={{"color": "red"}}>X</span></Modal>
+        ariaHideApp={false}
+        parentSelector={() => document.querySelector('#root')}
+        contentLabel="Example Modal">
+        <div className="todo-popup">
+          <input
+            type="text"
+            name="title"
+            className="title"
+            value={state.todo.title}
+            onChange={onChangeTodo} />
+          <dl>
+            <dt>Created</dt>
+            <dd>{state.todo.createAt}</dd>
+            <dt>Complete or Not</dt>
+            <dd>{state.todo.isComplete ? "Y" : "N"}</dd>
+            <dt>Content</dt>
+            <dd>
+              <textarea
+                name="contents"
+                cols="30" 
+                rows="10"
+                value={state.todo.contents ? state.todo.contents : ""}
+                onChange={onChangeTodo}></textarea>
+            </dd>
+          </dl>
+          <button type="button" onClick={onClickCloseModal}>취소</button>
+          <button type="button" onClick={onSubmitModifyTodo}>수정</button>
+        </div>
+      </Modal>
       <Aside />
       <Header />
       <section className="contents">
@@ -204,9 +286,9 @@ const Main = ({
           type="text"
           name="title"
           className="new-todo"
-          value={todo.title}
-          onChange={onChange}
-          onKeyDown={e => e.key === "Enter" ? submitTodo(e): false }
+          value={input.title}
+          onChange={onChangeInput}
+          onKeyDown={e => e.key === "Enter" ? onSubmitTodo(e): false }
           placeholder="What needs to be done?" />
         <TodoList
           filter={filter}
