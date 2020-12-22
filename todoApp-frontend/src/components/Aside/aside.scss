@@ -10,10 +10,22 @@ $aside-default-width: 48px;
 		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
                 0 25px 50px 0 rgba(0, 0, 0, 0.1);
     
+    #menuBtn {
+      position: relative;
+      left: 54px;
+      background: none;
+      border: none;
+      outline: none;
+      
+      .material-icons {
+        font-size: 48px;
+      }
+    }
+    
     ul {
       position: absolute;
       
-      &:nth-child(2) {
+      &:nth-child(3) {
         bottom: 0;
       }
     }
