@@ -30,18 +30,27 @@ body {
       &.todoapp,
       &.login,
       &.join {
-        width: calc(100% - 48px);
-        margin-left: 48px;
+        width: calc(100% - 82px);
+        margin-left: 82px;
 
         &.on {
-          width: calc(100% - 120px);
-          margin-left: 120px;
+          width: calc(100% - 150px);
+          margin-left: 150px;
 
           aside {
-            width: 120px;
+            width: 150px;
 
             #menuBtn {
-              left: 126px;
+              left: 156px;
+            }
+
+            ul:nth-child(2) {
+              li {
+                .menu-name {
+                  display: inline-block;
+                  font-weight: bold;
+                }
+              }
             }
           }
         }

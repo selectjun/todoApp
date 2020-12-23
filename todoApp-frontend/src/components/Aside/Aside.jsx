@@ -7,6 +7,8 @@ const Aside = () => {
   const onToggleMenu = (e) => {
     e.preventDefault();
     document.querySelector(".container").classList.toggle("on");
+    const iconName = document.querySelector(".container").classList.contains("on") ? "arrow_back" : "menu";
+    document.querySelector("#menuBtn .material-icons").innerText = iconName;
   }
 
   const logout = (e) => {
@@ -23,14 +25,20 @@ const Aside = () => {
         <span className="material-icons">menu</span>
       </button>
       <ul>
-        <li><Link to="/todo">TODOS</Link></li>
-        <li><Link to="/user">회원정보</Link></li>
-      </ul>
-      <ul>
         <li>
-          <a href="#" onClick={logout}>logout</a>
+          <a href="/todo">
+            <span className="material-icons">receipt_long</span>
+            <span className="menu-name">TODOS</span>
+          </a>
+        </li>
+        <li>
+          <a href="/user">
+            <span className="material-icons">portrait</span>
+            <span className="menu-name">회원정보</span>
+          </a>
         </li>
       </ul>
+      <a href="#" onClick={logout}>LOGOUT</a>
     </aside>
   );
 }

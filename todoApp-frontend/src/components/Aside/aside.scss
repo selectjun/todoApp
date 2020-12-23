@@ -1,32 +1,66 @@
-$aside-default-width: 48px;
+$aside-default-width: 82px;
 
 .aside {
-    height: 100%;
-    width: $aside-default-width;
-    background-color: #fff;
-    position: fixed;
-    top: 0;
-    left: 0;
-		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
-                0 25px 50px 0 rgba(0, 0, 0, 0.1);
+  height: 100%;
+  width: $aside-default-width;
+  background-color: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
+              0 25px 50px 0 rgba(0, 0, 0, 0.1);
+  
+  #menuBtn {
+    position: relative;
+    left: 88px;
+    background: none;
+    border: none;
+    outline: none;
     
-    #menuBtn {
-      position: relative;
-      left: 54px;
-      background: none;
-      border: none;
-      outline: none;
-      
-      .material-icons {
-        font-size: 48px;
+    .material-icons {
+      font-size: 48px;
+    }
+  }
+  
+  ul {
+    position: absolute;
+
+    &:nth-child(2) {
+      top: 0;
+
+      li {
+        padding-top: 12px;
+
+        a {
+          display: inline-block;
+          clear: both;
+
+          &> * {
+            float: left;
+          }
+
+          .material-icons {
+            font-size: 42px;
+            margin-left: 20px;
+          }
+
+          .menu-name {
+            line-height: 42px;
+            text-indent: 6px;
+          }
+        }
+
+        .menu-name {
+          display: none;
+        }
       }
     }
-    
-    ul {
-      position: absolute;
-      
-      &:nth-child(3) {
-        bottom: 0;
-      }
-    }
+  }
+  &> a {
+    position: absolute;
+    font-weight: bold;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
