@@ -18,6 +18,11 @@ const userInsertValid = require("../validates/user.insert.valid");
 const aes256 = require("../utils/security/aes256.util");
 
 /**
+ * JWT Provider
+ */
+const jwtProvider = require("../utils/security/jwt-provider.util");
+
+/**
  * 사용자 등록
  */
 router.post("/", userInsertValid, (req, res, next) => {
@@ -71,6 +76,107 @@ router.post("/", userInsertValid, (req, res, next) => {
       success: true,
       id: req.query.id
     });
+  }).catch(err => {
+    res.status(500).json({
+      success: false,
+      message: err
+    });
+  });
+});
+
+/**
+ * 사용자 패스워드 일치 여부 조회
+ */
+router.post("/password/:password/", (req, res, next) => {
+  const token = jwtProvider.resolveToken(req);
+  if (jwtProvider.validToken(token)) {
+    next();
+  } else {
+    res.status(403).json({
+      success: false,
+      message: "권한이 없습니다"
+    });
+  }
+}, (req, res) => {
+  const token = jwtProvider.resolveToken(req);
+  const id = jwtProvider.getUserPk(token);
+  const password = req.params.password;
+
+  models.user.count({
+    where: {
+      id: id,
+      password: password
+    }
+  }).then(count => {
+    if (count > 0) {
+      res.status(200).json({
+        success: true,
+        message: "본인인증 되었습니다"
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: "패스워드가 일치하지 않습니다"
+      });
+    }
+  }).catch(err => {
+    res.status(500).json({
+      success: false,
+      message: err
+    });
+  });
+});
+
+/**
+ * 사용자 정보 조회
+ */
+router.get("/", (req, res, next) => {
+  const token = jwtProvider.resolveToken(req);
+  if (jwtProvider.validToken(token)) {
+    next();
+  } else {
+    res.status(403).json({
+      success: false,
+      message: "권한이 없습니다"
+    });
+  }
+}, (req, res) => {
+  const token = jwtProvider.resolveToken(req);
+  const id = jwtProvider.getUserPk(token);
+  const password = req.query.password;
+
+  models.user.count({
+    where: {
+      id: id,
+      password: password
+    }
+  }).then(count => {
+    if (count > 0) {
+      models.user.findOne({
+        where: {
+          id: id
+        },
+        attributes: {
+          exclude: ["password"]
+        }
+      }).then(user => {
+        user.email = aes256.decrypt(user.email);
+        res.status(200).json({
+          success: 200,
+          user: user
+        });
+      }).catch(err => {
+        res.status(500).json({
+          success: false,
+          message: err
+        });
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: "잘못된 접근입니다"
+      });
+    }
   }).catch(err => {
     res.status(500).json({
       success: false,

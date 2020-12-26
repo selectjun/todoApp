@@ -29,7 +29,8 @@ body {
 
       &.todoapp,
       &.login,
-      &.join {
+      &.join,
+      &.user {
         width: calc(100% - 82px);
         margin-left: 82px;
 
@@ -57,13 +58,19 @@ body {
       }
 
       .contents {
-        background: #fff;
         margin: 10px auto 40px auto;
         position: relative;
         min-width: 230px;
         max-width: 550px;
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
-                    0 25px 50px 0 rgba(0, 0, 0, 0.1);
+        
+        &.white {
+          background: #fff;
+        }
+
+        &.shadow {
+          box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
+                      0 25px 50px 0 rgba(0, 0, 0, 0.1);
+        }
         
         input::-webkit-input-placeholder,
         input::-moz-placeholder,

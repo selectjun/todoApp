@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import sha256 from "sha256";
 
@@ -41,7 +42,7 @@ const Login = () => {
   return (
     <div className="container login">
       <Header />
-      <section className="contents">
+      <section className="contents white shadow">
         <input 
           type="text"
           className="login-inp"

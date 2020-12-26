@@ -1,0 +1,54 @@
+.container.user {
+  .contents {
+    .password-auth,
+    .user-info {
+      .sub-title {
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        padding-bottom: 32px;
+      }
+
+      dl {
+        width: 320px;
+        min-width: 230px;
+        margin: 0 auto;
+
+        dt {
+          line-height: 38px;
+          font-weight: bold;
+          font-size: 16px;
+          margin-top: 12px;
+        }
+
+        dd {
+          text-indent: 8px;
+
+          &.id {
+            padding: 8px 8px 8px 0;
+            font-size: 16px;
+          }
+
+          input {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            width: 100%;
+          }
+        }
+      }
+
+      button {
+        width: 320px;
+        min-width: 230px;
+        margin: 16px auto 0;
+        display: block;
+        border: 1px solid #ddd;
+        background: #b83f45;
+        padding: 8px;
+        color: #fff;
+        font-weight: bold;
+      }
+    }
+  }
+}
