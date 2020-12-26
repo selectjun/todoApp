@@ -29,18 +29,21 @@ const UserInfo = ({
   const onClickUpdateUser = () => {
     if (validater.isEmpty(user.currentPassword)) {
       alert("현재 패스워드를 입력해주세요");
-    } else if (!validater.isEmpty(user.currentPassword) && validater.isPassword(user.password)) {
+    } else if (!validater.isEmpty(user.password) && !validater.isPassword(user.password)) {
       alert("패스워드 형식에 맞게 입력해주세요\n두 종류 이상의 문자구성 및 8자리 이상으로 구성해주세요\n(알파벳 대/소문자, 숫자, 특수기호 \"$@!%*?&\")");
     } else if (!validater.isEmpty(user.password) && validater.isEmpty(user.retryPassword)) {
       alert("새로운 패스워드 확인을 입력해주세요");
+    } else if (user.password !== user.retryPassword) {
+      alert("새로운 패스워드가 일치하지 않습니다");
     } else if (validater.isEmpty(user.name)) {
       alert("이름을 입력해주세요");
     } else if (validater.isEmpty(user.email)) {
       alert("이메일을 입력해주세요");
-    } else if (validater.isEmail(user.email)) {
+    } else if (!validater.isEmail(user.email)) {
       alert("이메일을 형식에 맞게 입력해주세요");
     } else {
-      const url = `/user/?password=${sha256(user.password)}&name=${user.name}&email=${user.email}`;
+      let url = `/user/?currentPassword=${sha256(user.currentPassword)}&name=${user.name}&email=${user.email}`;
+      if (user.password) { url += `&password=${sha256(user.password)}`; }
       API.put(url).then(res => {
         if (res.data.success) {
           alert(res.data.message);
@@ -54,10 +57,12 @@ const UserInfo = ({
     const url = `/user/?password=${sha256(password)}`;
     API.get(url).then(res => {
       if (res.data.success) {
-        setUser({...user, id: res.data.user.id});
-        setUser({...user, name: res.data.user.name});
-        setUser({...user, email: res.data.user.email});
-        console.log(user)
+        setUser({
+          ...user,
+          id: res.data.user.id,
+          name: res.data.user.name,
+          email: res.data.user.email
+        });
       }
     });
   }, []);

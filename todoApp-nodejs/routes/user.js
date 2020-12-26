@@ -1,6 +1,7 @@
 const express = require("express");
 const { validationResult } = require('express-validator');
 const router = express.Router();
+const Op = require("sequelize").Op;
 
 /**
  * Database Models
@@ -175,6 +176,66 @@ router.get("/", (req, res, next) => {
       res.status(500).json({
         success: false,
         message: "잘못된 접근입니다"
+      });
+    }
+  }).catch(err => {
+    res.status(500).json({
+      success: false,
+      message: err
+    });
+  });
+});
+
+/**
+ * 사용자 정보 수정
+ */
+router.put("/", (req, res, next) => {
+  const token = jwtProvider.resolveToken(req);
+  if (jwtProvider.validToken(token)) {
+    next();
+  } else {
+    res.status(403).json({
+      success: false,
+      message: "권한이 없습니다"
+    });
+  }
+}, (req, res) => {
+  const token = jwtProvider.resolveToken(req);
+  const id = jwtProvider.getUserPk(token);
+  const currentPassword = req.query.currentPassword;
+
+  models.user.count({
+    where: {
+      id: id,
+      password: currentPassword
+    }
+  }).then(count => {
+    let data = {};
+    data = req.query.password ? {...data, password: req.query.password} : data;
+    data = req.query.name ? {...data, name: req.query.name} : data;
+    data = req.query.email ? {...data, email: aes256.encrypt(req.query.email)} : data;
+
+    if (count > 0) {
+      models.user.update(data, {
+        where: {
+          id: id
+        }
+      }).then(() => {
+        res.status(200).json({
+          success: 200,
+          message: "회원정보가 수정되었습니다",
+          id: id
+        });
+      }).catch(err => {
+        res.status(500).json({
+          success: false,
+          message: err
+        });
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: "현재 패스워드가 일치하지 않습니다"
       });
     }
   }).catch(err => {
