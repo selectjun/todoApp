@@ -82,14 +82,32 @@ const reducer = (state, action) => {
           [action.name]: action.value
         }
       }
-      case "CHANGE_TODO":
-        return {
-          ...state,
-          todo: {
-            ...state.todo,
-            [action.name]: action.value
-          }
+    case "CHANGE_TODO":
+      return {
+        ...state,
+        todo: {
+          ...state.todo,
+          [action.name]: action.value
         }
+      }
+    case "CHANGE_START_AT":
+      return {
+        ...state,
+        todo: {
+          ... state.todo,
+          startAt: action.startAt
+        }
+      }
+    case "CHANGE_END_AT":
+      return {
+        ...state,
+        todo: {
+          ... state.todo,
+          endAt: action.endAt
+        }
+      }
+    case "CHANGE_END_AT":
+      return {}
     case "CHANGE_FILTER":
       return {
         ...state,
@@ -156,6 +174,12 @@ const Main = ({
   // 기본키 등록
   const onSetTodoId = useCallback((todoId) => dispatch({ type: "SET_TODO_ID", todoId}));
 
+  // 시작일시 변경
+  const onChangeStartAt = useCallback((startAt) => dispatch({ type: "CHANGE_START_AT", startAt}));
+
+  // 종료일시 변경
+  const onChangeEndAt = useCallback((endAt) => dispatch({ type: "CHANGE_END_AT", endAt}));
+
   // 수정 팝업 열기
   const onClickOpenModal = (todoId) => {
     setModalIsOpen(true);
@@ -186,13 +210,11 @@ const Main = ({
   // To Do 수정
   const onSubmitModifyTodo = useCallback(() => {
     if (confirm("수정하시겠습니까?")) {
-      const url = `/todo/${todo.todoId}/?title=${todo.title}&isComplete=${todo.isComplete}&contents=${todo.contents}`;
+      const url = `/todo/${todo.todoId}/?title=${todo.title}&isComplete=${todo.isComplete}&startAt=${todo.startAt}&endAt=${todo.endAt}&contents=${todo.contents}`;
       API.put(url).then(res => {
         if (res.data.success) {
           updateTodo(todo);
           onClickCloseModal();
-        } else {
-          alert("에러가 발생하였습니다.\n잠시 후, 다시 시도해주세요.");
         }
       });
     }
@@ -206,8 +228,6 @@ const Main = ({
         if (res.data.success) {
           deleteTodo(todo.todoId);
           onDecreaseTodoCount();
-        } else {
-          alert("삭제하는 중, 에러가 발생하였습니다.");
         }
       });
     });
@@ -219,8 +239,6 @@ const Main = ({
     API.get("/todo/").then(res => {
       if (res.data.success) {
         res.data.todoList.map(todo => addTodo(todo));
-      } else {
-        alert("에러가 발생하였습니다.\n새로고침(F5) 후, 다시 시도해주세요.");
       }
     });
 
@@ -231,8 +249,6 @@ const Main = ({
           type: "SET_TODO_COUT",
           todoCount: res.data.count
         });
-      } else {
-        alert("에러가 발생하였습니다.\n새로고침(F5) 후, 다시 시도해주세요.");
       }
     });
   }, []);
@@ -314,10 +330,22 @@ const Main = ({
             <dd>{todo.createAt}</dd>
             <dt>완료 여부</dt>
             <dd>{todo.isComplete ? "Y" : "N"}</dd>
-            <dt>시작 일자</dt>
-            <dd><DatePicker /></dd>
-            <dt>종료일자</dt>
-            <dd><DatePicker /></dd>
+            <dt>시작 일시</dt>
+            <dd>
+              <DatePicker
+                dateFormat="yyyy-MM-dd hh:mm"
+                selected={todo.startAt ? new Date(todo.startAt) : null}
+                onChange={onChangeStartAt}
+                showTimeSelect />
+            </dd>
+            <dt>종료 일시</dt>
+            <dd>
+              <DatePicker
+                dateFormat="yyyy-MM-dd hh:mm"
+                selected={todo.endAt ? new Date(todo.endAt) : null}
+                onChange={onChangeEndAt}
+                showTimeSelect />
+            </dd>
             <dt>내용</dt>
             <dd>
               <textarea
@@ -333,18 +361,29 @@ const Main = ({
             </dd>
           </dl>
           <div className="button-group">
-          <button
-              type="button"
-              className="button cancel left"
-              onClick={() => {}}>삭제</button>
             <button
               type="button"
-              className="button cancel right"
-              onClick={onClickCloseModal}>취소</button>
+              className="button cancel left"
+              onClick={() => {
+                const url = `/todo/${todoId}/delete/`;
+                API.put(url).then(res => {
+                  if (res.data.success) {
+                    deleteTodo(todoId);
+                    onDecreaseTodoCount();
+                    onClickCloseModal();
+                  } else {
+                    alert("삭제하는 중, 에러가 발생하였습니다.");
+                  }
+                });
+              }}>삭제</button>
             <button
               type="button"
               className="button submit right"
               onClick={onSubmitModifyTodo}>수정</button>
+            <button
+              type="button"
+              className="button cancel right"
+              onClick={onClickCloseModal}>취소</button>
           </div>
         </div>
       </Modal>
