@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState, useReducer } from "react";
 import Modal from "react-modal";
+import DatePicker from "react-datepicker"
 
 import Aside from "@components/Aside"
 import Header from "@components/Header"
@@ -9,6 +10,7 @@ import TodoFooter from "@components/TodoFooter";
 import { API } from "@components/axios";
 
 import "./main.scss"
+import "react-datepicker/dist/react-datepicker.css";
 
 const initialState = {
   todoCount: 0,
@@ -252,7 +254,7 @@ const Main = ({
     <div className="container todoapp">
       <Aside />
       <Header />
-      <section className="contents">
+      <section className="contents white shandow">
         <input
           type="text"
           name="title"
@@ -312,6 +314,10 @@ const Main = ({
             <dd>{todo.createAt}</dd>
             <dt>완료 여부</dt>
             <dd>{todo.isComplete ? "Y" : "N"}</dd>
+            <dt>시작 일자</dt>
+            <dd><DatePicker /></dd>
+            <dt>종료일자</dt>
+            <dd><DatePicker /></dd>
             <dt>내용</dt>
             <dd>
               <textarea
@@ -326,14 +332,18 @@ const Main = ({
               <input type="file" name="" id=""/>
             </dd>
           </dl>
-          <div className="button-group right">
+          <div className="button-group">
+          <button
+              type="button"
+              className="button cancel left"
+              onClick={() => {}}>삭제</button>
             <button
               type="button"
-              className="button cancel"
+              className="button cancel right"
               onClick={onClickCloseModal}>취소</button>
             <button
               type="button"
-              className="button submit"
+              className="button submit right"
               onClick={onSubmitModifyTodo}>수정</button>
           </div>
         </div>

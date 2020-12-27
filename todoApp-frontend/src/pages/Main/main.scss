@@ -63,6 +63,7 @@
     dt, dd {
       float: left;
       line-height: 32px;
+      margin: 6px 0;
     }
 
     dt {
@@ -72,6 +73,13 @@
 
     dd {
       width: calc(100% - 210px);
+
+      .react-datepicker-wrapper {
+        input {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+      }
     }
 
     textarea {
@@ -89,27 +97,22 @@
   .button-group {
     padding-top: 27px;
 
-    &.right {
-      text-align: right;
       
-      button {
-        margin-left: 12px;
-      }
-    }
-
-    &.left {
-      text-align: left;
-
-      button {
-        margin-right: 12px;
-      }
-    }
-
-    .button {
+    button {
       border: 1px solid #DDC;
       padding: 6px 32px;
       font-weight: 300;
-      
+
+      &.left {
+        float: left;
+        margin-right: 12px;
+      }
+
+      &.right {
+        float: right;
+        margin-left: 12px;
+      }
+
       &.cancel {
         background: none;
       }

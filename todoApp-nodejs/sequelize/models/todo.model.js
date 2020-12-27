@@ -20,6 +20,16 @@ module.exports = (sequelize) => {
       type: DataTypes.TEXT,
       allowNull: true
     },
+    startAt: {
+      field: "START_AT",
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    endAt: {
+      field: "END_AT",
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
     userId: {
       field: "USER_ID",
       type: DataTypes.STRING,

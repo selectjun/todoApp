@@ -162,6 +162,7 @@ router.put("/:todoId/", (req, res) => {
       message: "[todoId] 값이 존재하지 않습니다"
     });
   } else {
+    // TODO: 수정이 불가능한 컬럼까지 수정될 가능성이 있음.
     models.todo.update(req.query, {
       where: {
         todoId: todoId
