@@ -1,5 +1,6 @@
 const express = require("express");
 const { validationResult } = require("express-validator");
+const asyncHandler = require("express-async-handler");
 const router = express.Router();
 var multer  = require("multer");
 
@@ -177,7 +178,7 @@ router.post("/", todoInsertValid, (req, res) => {
 /**
  * To Do 수정하기
  */
-router.put("/:todoId/", [todoUpdateValid, todoUpload.single("file")], (req, res) => {
+router.put("/:todoId/", [todoUpdateValid, todoUpload.single("file")], asyncHandler(async (req, res) => {
   const valid = validationResult(req);
   const todoId = req.params.todoId
 
@@ -189,29 +190,26 @@ router.put("/:todoId/", [todoUpdateValid, todoUpload.single("file")], (req, res)
     });
   } else {
     // TODO: 파일 유효성 체크
-    // TODO: req.file NULL일 경우 처리
-    models.file.create({
+    const file = req.file ? await models.file.create({
       originalName: req.file.originalname,
       saveName: req.file.filename
-    }).then(file => {
-      // TODO: 수정이 불가능한 컬럼까지 수정될 가능성이 있음.
-      models.todo.update({
-        ...req.query,
-        fileId: file.fileId
-      }, {
-        where: {
-          todoId: todoId
-        }
-      }).then(() => {
-        res.status(200).json({
-          success: true,
-          todoId: todoId
-        });
-      }).catch(err => {
-        res.status(500).json({
-          success: false,
-          message: err
-        });
+    }) : null;
+
+    let data = {};
+    data = req.query.isComplete ? { ...data, isComplete: req.query.isComplete } : data;
+    data = req.query.startAt ? { ...data, startAt: req.query.startAt } : data;
+    data = req.query.endAt ? { ...data, endAt: req.query.endAt } : data;
+    data = req.query.contents ? { ...data, contents: req.query.contents } : data;
+    data = file ? { ...data, fileId: file.fileId } : data;
+
+    models.todo.update(data, {
+      where: {
+        todoId: todoId
+      }
+    }).then(() => {
+      res.status(200).json({
+        success: true,
+        todoId: todoId
       });
     }).catch(err => {
       res.status(500).json({
@@ -219,9 +217,8 @@ router.put("/:todoId/", [todoUpdateValid, todoUpload.single("file")], (req, res)
         message: err
       });
     });
-    
   };
-});
+}));
 
 /**
  * To Do 완료하기

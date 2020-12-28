@@ -12,6 +12,7 @@
   "dependencies": {
     "aes256": "^1.0.4",
     "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
     "express-interceptor": "^1.2.0",
     "express-validator": "^6.8.0",
     "jsonwebtoken": "^8.5.1",
