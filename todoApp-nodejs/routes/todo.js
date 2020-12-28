@@ -1,6 +1,12 @@
 const express = require("express");
 const { validationResult } = require("express-validator");
 const router = express.Router();
+var multer  = require("multer");
+
+/**
+ * 설정
+ */
+const config = require("../config/config.json").dev;
 
 /**
  * 인증
@@ -18,6 +24,11 @@ const { models } = require("../sequelize");
 const todoInsertValid = require("../validates/todo.insert.valid");
 
 /**
+ * To Do 수정 유효성 객체
+ */
+const todoUpdateValid = require("../validates/todo.update.valid");
+
+/**
  * 페이지 당 게시물 수
  */
 const RECORDS_PER_PAGE = 20;
@@ -31,6 +42,18 @@ router.all("/*", auth);
  * JWT Provider
  */
 const jwtProvider = require("../utils/security/jwt-provider.util");
+
+/**
+ * To Do - Upload 설정
+ */
+const todoUpload = multer({ storage: multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, config.upload.physicalPath + "/todo/")
+  },
+  filename: function (req, file, cb) {
+    cb(null, "todo_" + Date.now())
+  }
+})});
 
 /**
  * To Do 목록 가져오기
@@ -100,6 +123,7 @@ router.get("/:todoId/", (req, res) => {
       message: "[todoId] 값이 존재하지 않습니다."
     });
   } else {
+    // TODO: 파일 정보 가져오기
     models.todo.findOne({
       where: {
         todoId: todoId,
@@ -153,24 +177,41 @@ router.post("/", todoInsertValid, (req, res) => {
 /**
  * To Do 수정하기
  */
-router.put("/:todoId/", (req, res) => {
+router.put("/:todoId/", [todoUpdateValid, todoUpload.single("file")], (req, res) => {
+  const valid = validationResult(req);
   const todoId = req.params.todoId
-  
-  if (!todoId) {
+
+  if (!valid.isEmpty()) {
     res.status(400).json({
       success: false,
-      message: "[todoId] 값이 존재하지 않습니다"
+      param: valid.errors[0].param,
+      message: valid.errors[0].msg
     });
   } else {
-    // TODO: 수정이 불가능한 컬럼까지 수정될 가능성이 있음.
-    models.todo.update(req.query, {
-      where: {
-        todoId: todoId
-      }
-    }).then(() => {
-      res.status(200).json({
-        success: true,
-        todoId: todoId
+    // TODO: 파일 유효성 체크
+    // TODO: req.file NULL일 경우 처리
+    models.file.create({
+      originalName: req.file.originalname,
+      saveName: req.file.filename
+    }).then(file => {
+      // TODO: 수정이 불가능한 컬럼까지 수정될 가능성이 있음.
+      models.todo.update({
+        ...req.query,
+        fileId: file.fileId
+      }, {
+        where: {
+          todoId: todoId
+        }
+      }).then(() => {
+        res.status(200).json({
+          success: true,
+          todoId: todoId
+        });
+      }).catch(err => {
+        res.status(500).json({
+          success: false,
+          message: err
+        });
       });
     }).catch(err => {
       res.status(500).json({
@@ -178,7 +219,8 @@ router.put("/:todoId/", (req, res) => {
         message: err
       });
     });
-  }
+    
+  };
 });
 
 /**

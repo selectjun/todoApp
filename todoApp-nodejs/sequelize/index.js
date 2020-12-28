@@ -27,20 +27,21 @@ const sequelize = new Sequelize(
 sequelize
   .authenticate()
   .then(() => {
-    console.log('Connection has been established successfully.');
+    console.log("Connection has been established successfully.");
   })
   .catch(err => {
-    console.error('Unable to connect to the database:', err);
+    console.error("Unable to connect to the database: ", err);
   });
 
 // Model 정의
 const modelDefiners = [
-  require('./models/todo.model'),
-  require('./models/user.model'),
-  require('./models/authority.model'),
-  require('./models/userAuthority.model'),
+  require("./models/todo.model"),
+  require("./models/user.model"),
+  require("./models/authority.model"),
+  require("./models/userAuthority.model"),
+  require("./models/file.model"),
 	// Add more models here...
-	// require('./models/item'),
+	// require("./models/item"),
 ];
 
 // We define all models according to their files.

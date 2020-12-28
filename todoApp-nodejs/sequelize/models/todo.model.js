@@ -30,6 +30,11 @@ module.exports = (sequelize) => {
       type: DataTypes.DATE,
       allowNull: true,
     },
+    fileId: {
+      field: "FILE_ID",
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     userId: {
       field: "USER_ID",
       type: DataTypes.STRING,

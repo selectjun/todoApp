@@ -18,6 +18,7 @@ const initialState = {
     todoId: "",
     title: "",
     contents: "",
+    file: null,
     createAt: null,
     updateAt: null,
     isComplete: false,
@@ -27,6 +28,7 @@ const initialState = {
     todoId: "",
     title: "",
     contents: "",
+    file: null,
     createAt: null,
     updateAt: null,
     isComplete: false,
@@ -90,6 +92,14 @@ const reducer = (state, action) => {
           [action.name]: action.value
         }
       }
+      case "CHANGE_TODO_FILE":
+        return {
+          ...state,
+          todo: {
+            ...state.todo,
+            file: action.file
+          }
+        }
     case "CHANGE_START_AT":
       return {
         ...state,
@@ -139,21 +149,13 @@ const Main = ({
   // 입력 데이터 변경 처리
   const onChangeInput = useCallback((e) => {
     const { name, value } = e.target;
-    dispatch({
-      type: "CHANGE_INPUT",
-      name,
-      value
-    });
+    dispatch({ type: "CHANGE_INPUT", name, value });
   });
 
   // 수정 데이터 변경 처리
   const onChangeTodo = useCallback((e) => {
     const { name, value } = e.target;
-    dispatch({
-      type: "CHANGE_TODO",
-      name,
-      value
-    });
+    dispatch({ type: "CHANGE_TODO", name, value });
   });
 
   // 제목 초기화
@@ -179,6 +181,9 @@ const Main = ({
 
   // 종료일시 변경
   const onChangeEndAt = useCallback((endAt) => dispatch({ type: "CHANGE_END_AT", endAt}));
+
+  // TODO 파일 변경
+  const onChangeTodoFile = useCallback((file) => dispatch({ type: "CHANGE_TODO_FILE", file }));
 
   // 수정 팝업 열기
   const onClickOpenModal = (todoId) => {
@@ -211,7 +216,7 @@ const Main = ({
   const onSubmitModifyTodo = useCallback(() => {
     if (confirm("수정하시겠습니까?")) {
       const url = `/todo/${todo.todoId}/?title=${todo.title}&isComplete=${todo.isComplete}&startAt=${todo.startAt}&endAt=${todo.endAt}&contents=${todo.contents}`;
-      API.put(url).then(res => {
+      API.put(url, todo.file).then(res => {
         if (res.data.success) {
           updateTodo(todo);
           onClickCloseModal();
@@ -219,6 +224,20 @@ const Main = ({
       });
     }
   });
+
+  // To Do 삭제
+  const onClickDeleteTodo = () => {
+    const url = `/todo/${todoId}/delete/`;
+    API.put(url).then(res => {
+      if (res.data.success) {
+        deleteTodo(todoId);
+        onDecreaseTodoCount();
+        onClickCloseModal();
+      } else {
+        alert("삭제하는 중, 에러가 발생하였습니다.");
+      }
+    });
+  };
 
   // 완료된 To Do 일괄 삭제 처리
   const clearCompleted = () => {
@@ -231,7 +250,7 @@ const Main = ({
         }
       });
     });
-  }
+  };
 
   // 초기화
   useEffect(() => {
@@ -357,25 +376,21 @@ const Main = ({
             </dd>
             <dt>첨부 파일</dt>
             <dd>
-              <input type="file" name="" id=""/>
+              <input
+                type="file"
+                name="file"
+                onChange={(e) => {
+                  const file = new FormData();
+                  file.append("file", e.target.files[0]);
+                  onChangeTodoFile(file);
+                }} />
             </dd>
           </dl>
           <div className="button-group">
             <button
               type="button"
               className="button cancel left"
-              onClick={() => {
-                const url = `/todo/${todoId}/delete/`;
-                API.put(url).then(res => {
-                  if (res.data.success) {
-                    deleteTodo(todoId);
-                    onDecreaseTodoCount();
-                    onClickCloseModal();
-                  } else {
-                    alert("삭제하는 중, 에러가 발생하였습니다.");
-                  }
-                });
-              }}>삭제</button>
+              onClick={onClickDeleteTodo}>삭제</button>
             <button
               type="button"
               className="button submit right"
