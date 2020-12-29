@@ -129,11 +129,26 @@ router.get("/:todoId/", (req, res) => {
       where: {
         todoId: todoId,
         isDelete: false
-      }
+      },
+      include: [
+        {
+          model: models.file,
+          required: false,
+          attributes: ["originalName"]
+        },
+      ],
+      raw: true,
+      nest: true
     }).then(todo => {
       res.status(200).json({
         success: true,
-        todo: todo
+        todo: {
+          ...todo,
+          file: {
+            ...todo.file,
+            path: `${config.siteURL}/file/${todo.fileId}/`
+          }
+        }
       });
     }).catch(err => {
       res.status(500).json({

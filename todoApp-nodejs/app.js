@@ -8,6 +8,7 @@ const indexRouter = require("./routes/index");
 const userRouter = require("./routes/user");
 const todoRouter = require("./routes/todo");
 const tokenRotuer = require("./routes/token");
+const fileRotuer = require("./routes/file");
 
 // CORS 처리
 app.use(cors());
@@ -24,6 +25,7 @@ app.use("/", indexRouter);
 app.use("/api/user", userRouter);
 app.use("/api/todo", todoRouter);
 app.use("/api/token", tokenRotuer);
+app.use("/file", fileRotuer);
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)

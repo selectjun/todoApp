@@ -28,7 +28,10 @@ const initialState = {
     todoId: "",
     title: "",
     contents: "",
-    file: null,
+    file: {
+      originalName: "",
+      path: ""
+    },
     createAt: null,
     updateAt: null,
     isComplete: false,
@@ -384,6 +387,13 @@ const Main = ({
                   file.append("file", e.target.files[0]);
                   onChangeTodoFile(file);
                 }} />
+                <ul>
+                  <li>
+                    <a href={todo.file.path ? todo.file.path : "#"}>
+                      {todo.file.originalName ? todo.file.originalName: ""}
+                    </a>
+                  </li>
+                </ul>
             </dd>
           </dl>
           <div className="button-group">

@@ -3,10 +3,14 @@
  * @param sequelize Sequelize 객체
  */
 const applyExtraSetup = (sequelize) => {
-  //const { user, authority } = sequelize.models;
+  const { user, authority, todo, file } = sequelize.models;
 
-  //user.belongsToMany(authority, {as: "user", through: "USER_AUTHORITY", foreignKey: "ID"});
-  //authority.belongsTo(user, {as: "authority", through: "USER_AUTHORITY", foreignKey: "NAME"});
+  file.hasMany(todo, {
+    foreignKey: "fileId",
+  });
+  todo.belongsTo(file, {
+    foreignKey: "fileId",
+  });
 }
 
 module.exports = { applyExtraSetup };
