@@ -403,13 +403,13 @@ const Main = ({
                   file.append("file", e.target.files[0]);
                   onChangeTodoFile(file);
                 }} />
-                <ul>
-                  <li>
-                    <a href={todo.file.path ? todo.file.path : "#"}>
-                      {todo.file.originalName ? todo.file.originalName: ""}
-                    </a>
-                  </li>
-                </ul>
+                {
+                  todo.file.originalName
+                  ? <ul>
+                    <li><a href={todo.file.path}>{todo.file.originalName}</a></li>
+                  </ul>
+                  : null
+                }
             </dd>
           </dl>
           <div className="button-group">
