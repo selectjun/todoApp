@@ -95,14 +95,22 @@ const reducer = (state, action) => {
           [action.name]: action.value
         }
       }
-      case "CHANGE_TODO_FILE":
-        return {
-          ...state,
-          todo: {
-            ...state.todo,
-            file: action.file
-          }
+    case "CHANGE_TODO_FILE":
+      return {
+        ...state,
+        todo: {
+          ...state.todo,
+          file: action.file
         }
+      }
+    case "CHANGE_TODO_IS_COMPLETE":
+      return {
+        ...state,
+        todo: {
+          ...state.todo,
+          isComplete: !state.todo.isComplete
+        }
+      }
     case "CHANGE_START_AT":
       return {
         ...state,
@@ -119,8 +127,6 @@ const reducer = (state, action) => {
           endAt: action.endAt
         }
       }
-    case "CHANGE_END_AT":
-      return {}
     case "CHANGE_FILTER":
       return {
         ...state,
@@ -187,6 +193,9 @@ const Main = ({
 
   // TODO 파일 변경
   const onChangeTodoFile = useCallback((file) => dispatch({ type: "CHANGE_TODO_FILE", file }));
+
+  // TODO 완료 여부 변경
+  const onChangeTodoIsComplete = useCallback(() => dispatch({ type: "CHANGE_TODO_IS_COMPLETE" }));
 
   // 수정 팝업 열기
   const onClickOpenModal = (todoId) => {
@@ -351,7 +360,14 @@ const Main = ({
             <dt>생성 일자</dt>
             <dd>{todo.createAt}</dd>
             <dt>완료 여부</dt>
-            <dd>{todo.isComplete ? "Y" : "N"}</dd>
+            <dd>
+              <input 
+                type="checkbox"
+                name="isComplete"
+                id="isComplete"
+                checked={todo.isComplete}
+                onChange={onChangeTodoIsComplete} />
+            </dd>
             <dt>시작 일시</dt>
             <dd>
               <DatePicker
