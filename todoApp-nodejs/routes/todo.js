@@ -124,7 +124,6 @@ router.get("/:todoId/", (req, res) => {
       message: "[todoId] 값이 존재하지 않습니다."
     });
   } else {
-    // TODO: 파일 정보 가져오기
     models.todo.findOne({
       where: {
         todoId: todoId,
@@ -211,6 +210,7 @@ router.put("/:todoId/", [todoUpdateValid, todoUpload.single("file")], asyncHandl
     }) : null;
 
     let data = {};
+    data = req.query.title ? { ...data, title: req.query.title } : title;
     data = req.query.isComplete ? { ...data, isComplete: req.query.isComplete } : data;
     data = req.query.startAt ? { ...data, startAt: req.query.startAt } : data;
     data = req.query.endAt ? { ...data, endAt: req.query.endAt } : data;
