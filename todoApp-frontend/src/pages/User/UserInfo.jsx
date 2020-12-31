@@ -42,7 +42,7 @@ const UserInfo = ({
     } else if (!validater.isEmail(user.email)) {
       alert("이메일을 형식에 맞게 입력해주세요");
     } else {
-      let url = `/user/?currentPassword=${sha256(user.currentPassword)}&name=${user.name}&email=${user.email}`;
+      let url = `/api/user/?currentPassword=${sha256(user.currentPassword)}&name=${user.name}&email=${user.email}`;
       if (user.password) { url += `&password=${sha256(user.password)}`; }
       API.put(url).then(res => {
         if (res.data.success) {
@@ -54,7 +54,7 @@ const UserInfo = ({
   }
 
   useEffect(() => {
-    const url = `/user/?password=${sha256(password)}`;
+    const url = `/api/user/?password=${sha256(password)}`;
     API.get(url).then(res => {
       if (res.data.success) {
         setUser({

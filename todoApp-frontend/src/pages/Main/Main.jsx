@@ -211,7 +211,7 @@ const Main = ({
 
   // To Do 추가
   const onSubmitTodo = useCallback(() => {
-    const url = `/todo/?title=${input.title}`;
+    const url = `/api/todo/?title=${input.title}`;
     API.post(url).then(res => {
       if (res.data.success) {
         onSetTodoId(res.data.todoId);
@@ -227,7 +227,7 @@ const Main = ({
   // To Do 수정
   const onSubmitModifyTodo = useCallback(() => {
     if (confirm("수정하시겠습니까?")) {
-      const url = `/todo/${todo.todoId}/?title=${todo.title}&isComplete=${todo.isComplete}&startAt=${todo.startAt}&endAt=${todo.endAt}&contents=${todo.contents}`;
+      const url = `/api/todo/${todo.todoId}/?title=${todo.title}&isComplete=${todo.isComplete}&startAt=${todo.startAt}&endAt=${todo.endAt}&contents=${todo.contents}`;
       API.put(url, todo.file).then(res => {
         if (res.data.success) {
           updateTodo(todo);
@@ -239,7 +239,7 @@ const Main = ({
 
   // To Do 삭제
   const onClickDeleteTodo = () => {
-    const url = `/todo/${todoId}/delete/`;
+    const url = `/api/todo/${todoId}/delete/`;
     API.put(url).then(res => {
       if (res.data.success) {
         deleteTodo(todoId);
@@ -254,7 +254,7 @@ const Main = ({
   // 완료된 To Do 일괄 삭제 처리
   const clearCompleted = () => {
     todoList.filter(todo => todo.isComplete).map(todo => {
-      const url = `/todo/${todo.todoId}/delete/`;
+      const url = `/api/todo/${todo.todoId}/delete/`;
       API.put(url).then(res => {
         if (res.data.success) {
           deleteTodo(todo.todoId);
@@ -264,17 +264,28 @@ const Main = ({
     });
   };
 
+  const downloadFile = (url, name) => {
+    API.get(url, { responseType: "blob" }).then((res) => {
+      const downloadLink = window.URL.createObjectURL(new Blob([res.data], { type: res.headers["content-type"] }));
+      const link = document.createElement("a");
+      link.setAttribute("href", downloadLink);
+      link.setAttribute("download", name);
+      document.body.appendChild(link);
+      link.click();
+    });
+  };
+
   // 초기화
   useEffect(() => {
     // To Do 목록 가져오기
-    API.get("/todo/").then(res => {
+    API.get("/api/todo/").then(res => {
       if (res.data.success) {
         res.data.todoList.map(todo => addTodo(todo));
       }
     });
 
     // To Do 전체 갯수 가져오기
-    API.get("/todo/count/").then(res => {
+    API.get("/api/todo/count/").then(res => {
       if (res.data.success) {
         dispatch({
           type: "SET_TODO_COUT",
@@ -287,7 +298,7 @@ const Main = ({
   // 수정 팝업 데이터 불러오기
   useEffect(() => {
     if (modalIsOpen === true) {
-      const url = `/todo/${todoId}/`
+      const url = `/api/todo/${todoId}/`
       API.get(url).then((res) => {
         dispatch({
           type: "SET_TODO",
@@ -406,7 +417,11 @@ const Main = ({
                 {
                   todo.file.originalName
                   ? <ul>
-                    <li><a href={todo.file.path}>{todo.file.originalName}</a></li>
+                    <li>
+                      <button type="button"
+                        onClick={(e) => downloadFile(todo.file.path, todo.file.originalName)}>{todo.file.originalName}</button>
+                      <a href={todo.file.path}>{todo.file.originalName}</a>
+                    </li>
                   </ul>
                   : null
                 }

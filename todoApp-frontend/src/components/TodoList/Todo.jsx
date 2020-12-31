@@ -10,7 +10,7 @@ const Todo = ({
   onClickOpenModal
 }) => {
   const onClickDeleteButton = useCallback((todoId) => {
-    const url = `/todo/${todoId}/delete/`;
+    const url = `/api/todo/${todoId}/delete/`;
     API.put(url).then(res => {
        if (res.data.success) {
          deleteTodo(todoId);
@@ -22,7 +22,7 @@ const Todo = ({
   });
 
   const onClickCompleteButton = useCallback((todoId) => {
-    const url = `/todo/${todoId}/complete/`;
+    const url = `/api/todo/${todoId}/complete/`;
     API.put(url).then(res => {
        if (res.data.success) {
          completeTodo(todo.todoId);

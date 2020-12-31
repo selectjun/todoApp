@@ -32,7 +32,7 @@ const Login = () => {
     } else if (!loginData.password.replace(/^\s+|\s+$/g,"")) {
       alert("암호를 입력해주세요");
     } else {
-      const url = `/token/?id=${loginData.id}&password=${sha256(loginData.password)}`;
+      const url = `/api/token/?id=${loginData.id}&password=${sha256(loginData.password)}`;
       API.post(url).then(res => {
         window.location.href = "/todo";
       });

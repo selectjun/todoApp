@@ -21,7 +21,7 @@ const Toggle = ({
             if (!todo.isComplete === currentIsCompleteAll
                 || todoList.length === todoList.filter(todo => !todo.isComplete).length
                 || todoList.length === todoList.filter(todo => todo.isComplete).length) {
-              const url = `/todo/${todo.todoId}/complete/`;
+              const url = `/api/todo/${todo.todoId}/complete/`;
               API.put(url).then(res => {
                 if (res.data.success) {
                   completeTodo(todo.todoId);

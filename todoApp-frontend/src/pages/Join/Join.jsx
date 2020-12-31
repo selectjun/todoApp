@@ -69,7 +69,7 @@ const Join = () => {
       document.getElementsByName("email")[0].focus();
     } else {
       // 회원 가입
-      const url = `/user/?id=${state.id}&password=${sha256(state.password)}&name=${state.name}&email=${state.email}`;
+      const url = `/api/user/?id=${state.id}&password=${sha256(state.password)}&name=${state.name}&email=${state.email}`;
       API.post(url).then(res => {
         if (res.data.success) {
           alert("회원가입이 되었습니다.");

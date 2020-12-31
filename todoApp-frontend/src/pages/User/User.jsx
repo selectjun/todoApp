@@ -20,7 +20,7 @@ const User = () => {
   };
 
   const onClickPasswordAuth = () => {
-    const url = `/user/password/${sha256(password)}/`
+    const url = `/api/user/password/${sha256(password)}/`
     API.post(url).then(res => {
       if (res.data.success) {
         alert(res.data.message);

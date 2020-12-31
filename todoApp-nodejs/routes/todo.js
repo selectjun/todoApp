@@ -145,7 +145,7 @@ router.get("/:todoId/", (req, res) => {
           ...todo,
           file: {
             ...todo.file,
-            path: todo.fileId ? `${config.siteURL}/file/${todo.fileId}/` : null
+            path: todo.fileId ? `/file/${todo.fileId}/` : null
           }
         }
       });
