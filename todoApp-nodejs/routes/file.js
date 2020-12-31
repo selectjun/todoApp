@@ -39,28 +39,19 @@ router.get("/:fileId/", (req, res) => {
         fileId: fileId
       }
     }).then(file => {
-      // TODO: 파일이 존재하지 않을 경우, 서버가 중지되는 문제가 있음
-      res.setHeader("Content-Disposition", "attachment;filename=" + encodeURI(file.originalName));
-      res.setHeader("Content-Type","binary/octet-stream");
-
       // TODO: 절대경로, 상대경로에 따른 쉬운 저장위치 변경이 가능하도록 처리
-      try {
-        const path = `${__dirname}/../${config.upload.physicalPath}/${"todo"}/${file.saveName}`;
-        if (fs.exists(path)) {
-          const fileStream = fs.createReadStream(path);
-          fileStream.pipe(res);
-        } else {
-          res.status(404).json({
+      const path = `${__dirname}/../${config.upload.physicalPath}/${"todo"}/${file.saveName}`;
+      fs.access(path, fs.F_OK, (err) => {
+        if (err) {
+          return res.status(404).json({
             success: false,
             message: "파일이 존재하지 않습니다"
           });
         }
-      } catch (err) {
-        res.status(500).json({
-          success: false,
-          message: err
-        });
-      }
+        // TODO: 현재 다운로드가 되지 않고 있음.
+        const fileStream = fs.createReadStream(path);
+        fileStream.pipe(res);
+      });
     }).catch(err => {
       res.status(500).json({
         success: false,
