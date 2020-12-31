@@ -44,8 +44,23 @@ router.get("/:fileId/", (req, res) => {
       res.setHeader("Content-Type","binary/octet-stream");
 
       // TODO: 절대경로, 상대경로에 따른 쉬운 저장위치 변경이 가능하도록 처리
-      const fileStream = fs.createReadStream(`${__dirname}/../${config.upload.physicalPath}/${"todo"}/${file.saveName}`);
-      fileStream.pipe(res);
+      try {
+        const path = `${__dirname}/../${config.upload.physicalPath}/${"todo"}/${file.saveName}`;
+        if (fs.exists(path)) {
+          const fileStream = fs.createReadStream(path);
+          fileStream.pipe(res);
+        } else {
+          res.status(404).json({
+            success: false,
+            message: "파일이 존재하지 않습니다"
+          });
+        }
+      } catch (err) {
+        res.status(500).json({
+          success: false,
+          message: err
+        });
+      }
     }).catch(err => {
       res.status(500).json({
         success: false,
