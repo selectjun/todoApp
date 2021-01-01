@@ -79,6 +79,19 @@ body {
           font-weight: 300;
           color: #e6e6e6;
         }
+
+        .insert-modal-btn {
+          position: absolute;
+          top: 0;
+          right: 0;
+          padding: 16px;
+          font-size: 29px;
+          border: none;
+          outline: none;
+          background: none;
+          color: #cc9a9a;
+          cursor: pointer;
+        }
       }
 
       .user-box {
