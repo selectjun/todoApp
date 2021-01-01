@@ -33,6 +33,7 @@ body {
       &.user {
         width: calc(100% - 82px);
         margin-left: 82px;
+        height: auto;
 
         &.on {
           width: calc(100% - 150px);
