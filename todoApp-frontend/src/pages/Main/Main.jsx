@@ -63,14 +63,6 @@ const reducer = (state, action) => {
         ...state,
         todoCount: state.todoCount - 1
       }
-    case "SET_TODO_ID":
-      return {
-        ...state,
-        input: {
-          ...state.input,
-          todoId: action.todoId
-        }
-      }
     case "SET_TODO":
       return {
         ...state,
@@ -131,20 +123,20 @@ const reducer = (state, action) => {
           isComplete: !state.input.isComplete
         }
       }
-    case "CHANGE_TODO_START_AT":
+    case "CHANGE_TODO_DATE":
       return {
         ...state,
         todo: {
           ... state.todo,
-          startAt: action.startAt ? action.startAt.toISOString() : ""
+          [action.field]: action.date ? action.date.toISOString() : ""
         }
       }
-    case "CHANGE_TODO_END_AT":
+    case "CHANGE_INPUT_DATE":
       return {
         ...state,
-        todo: {
-          ... state.todo,
-          endAt: action.endAt ? action.endAt.toISOString() : ""
+        input: {
+          ... state.input,
+          [action.field]: action.date ? action.date.toISOString() : ""
         }
       }
     case "CHANGE_INPUT_START_AT":
@@ -188,7 +180,6 @@ const Main = ({
   const [state, dispatch] = useReducer(reducer, initialState);
   const [updateModalIsOpen, setUpdateModalIsOpen] = useState(false);
   const [insertModalIsOpen, setInsertModalIsOpen] = useState(false);
-  const [todoId, setTodoId] = useState(null);
 
   const { todoCount, input, todo, filter, currentIsCompleteAll } = state;
   
@@ -218,30 +209,21 @@ const Main = ({
 
   // 토글 처리
   const onChangeCurrentIsCompleteAll = useCallback(() => dispatch({ type: "CHANGE_CURRENT_IS_COMPLETE_ALL" }));
-
-  // 기본키 등록
-  const onSetTodoId = useCallback((todoId) => dispatch({ type: "SET_TODO_ID", todoId}));
-
-  // TODO 시작일시 변경
-  const onChangeTodoStartAt = useCallback((startAt) => dispatch({ type: "CHANGE_TODO_START_AT", startAt}));
-
-  // TODO 종료일시 변경
-  const onChangeTodoEndAt = useCallback((endAt) => dispatch({ type: "CHANGE_TODO_END_AT", endAt}));
-
-  // INPUT 시작일시 변경
-  const onChangeInputStartAt = useCallback((startAt) => dispatch({ type: "CHANGE_INPUT_START_AT", startAt}));
-
-  // INPUT 종료일시 변경
-  const onChangeInputEndAt = useCallback((endAt) => dispatch({ type: "CHANGE_INPUT_END_AT", endAt}));
+  
+  // TODO 일시 변경
+  const onChangeTodoDate = useCallback((field, date) => dispatch({ type: "CHANGE_TODO_DATE", field: field, date: date }));
 
   // TODO 파일 변경
   const onChangeTodoFile = useCallback((file) => dispatch({ type: "CHANGE_TODO_FILE", file }));
 
-  // INPUT 파일 변경
-  const onChangeInputFile = useCallback((file) => dispatch({ type: "CHANGE_INPUT_FILE", file }));
-
   // TODO 완료 여부 변경
   const onChangeTodoIsComplete = useCallback(() => dispatch({ type: "CHANGE_TODO_IS_COMPLETE" }));
+
+  // INPUT 일시 변경
+  const onChangeInputDate = useCallback((field, date) => dispatch({ type: "CHANGE_INPUT_DATE", field: field, date: date }));
+
+  // INPUT 파일 변경
+  const onChangeInputFile = useCallback((file) => dispatch({ type: "CHANGE_INPUT_FILE", file }));
 
   // INPUT 완료 여부 변경
   const onChangeInputIsComplete = useCallback(() => dispatch({ type: "CHANGE_INPUT_IS_COMPLETE" }));
@@ -256,16 +238,19 @@ const Main = ({
   });
 
   // 수정 팝업 열기
-  const onClickOpenUpdateModal = (todoId) => {
-    setUpdateModalIsOpen(true);
-    setTodoId(todoId);
-  }
+  const onClickOpenUpdateModal = useCallback((todoId) => {
+    const url = `/api/todo/${todoId}/`
+    API.get(url).then((res) => {
+      setUpdateModalIsOpen(true);
+      dispatch({
+        type: "SET_TODO",
+        todo: res.data.todo
+      });
+    });
+  });
 
   // 수정 팝업 닫기
-  const onClickCloseUpdateModal = () => {
-    setUpdateModalIsOpen(false);
-    setTodoId(null);
-  }
+  const onClickCloseUpdateModal = useCallback(() => setUpdateModalIsOpen(false));
 
   // To Do 추가
   const onSubmitTodo = useCallback(() => {
@@ -307,10 +292,10 @@ const Main = ({
 
   // To Do 삭제
   const onClickDeleteTodo = () => {
-    const url = `/api/todo/${todoId}/delete/`;
+    const url = `/api/todo/${todo.todoId}/delete/`;
     API.put(url).then(res => {
       if (res.data.success) {
-        deleteTodo(todoId);
+        deleteTodo(todo.todoId);
         onDecreaseTodoCount();
         onClickCloseUpdateModal();
       }
@@ -350,19 +335,6 @@ const Main = ({
     });
   }, []);
 
-  // 수정 팝업 데이터 불러오기
-  useEffect(() => {
-    if (updateModalIsOpen === true) {
-      const url = `/api/todo/${todoId}/`
-      API.get(url).then((res) => {
-        dispatch({
-          type: "SET_TODO",
-          todo: res.data.todo
-        });
-      });
-    }
-  }, [updateModalIsOpen, todoId]);
-
   return (
     <div className="container todoapp">
       <Aside />
@@ -400,11 +372,10 @@ const Main = ({
         todo={todo}
         updateModalIsOpen={updateModalIsOpen}
         onChangeTodo={onChangeTodo}
+        onChangeTodoDate={onChangeTodoDate}
         onChangeTodoFile={onChangeTodoFile}
-        onChangeTodoEndAt={onChangeTodoEndAt}
         onClickDeleteTodo={onClickDeleteTodo}
         onSubmitModifyTodo={onSubmitModifyTodo}
-        onChangeTodoStartAt={onChangeTodoStartAt}
         onChangeTodoIsComplete={onChangeTodoIsComplete}
         onClickCloseUpdateModal={onClickCloseUpdateModal} />
       <InsertModal
@@ -412,9 +383,8 @@ const Main = ({
         insertModalIsOpen={insertModalIsOpen}
         onSubmitTodo={onSubmitTodo}
         onChangeInput={onChangeInput}
+        onChangeInputDate={onChangeInputDate}
         onChangeInputFile={onChangeInputFile}
-        onChangeInputEndAt={onChangeInputEndAt}
-        onChangeInputStartAt={onChangeInputStartAt}
         onClickCloseInertModal={onClickCloseInertModal}
         onChangeInputIsComplete={onChangeInputIsComplete} />
     </div>

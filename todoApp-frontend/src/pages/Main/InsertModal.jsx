@@ -7,9 +7,8 @@ const InsertModal = ({
   insertModalIsOpen,
   onSubmitTodo,
   onChangeInput,
+  onChangeInputDate,
   onChangeInputFile,
-  onChangeInputEndAt,
-  onChangeInputStartAt,
   onClickCloseInertModal,
   onChangeInputIsComplete
 }) => {
@@ -58,7 +57,7 @@ const InsertModal = ({
             <DatePicker
               dateFormat="yyyy-MM-dd hh:mm"
               selected={input.startAt ? new Date(input.startAt) : null}
-              onChange={onChangeInputStartAt}
+              onChange={(startAt) => onChangeInputDate("startAt", startAt)}
               showTimeSelect />
           </dd>
           <dt>종료 일시</dt>
@@ -66,7 +65,7 @@ const InsertModal = ({
             <DatePicker
               dateFormat="yyyy-MM-dd hh:mm"
               selected={input.endAt ? new Date(input.endAt) : null}
-              onChange={onChangeInputEndAt}
+              onChange={(endAt) => onChangeInputDate("endAt", endAt)}
               showTimeSelect />
           </dd>
           <dt>내용</dt>

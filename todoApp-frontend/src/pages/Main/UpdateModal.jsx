@@ -6,11 +6,10 @@ const UpdateModal = ({
   todo,
   updateModalIsOpen,
   onChangeTodo,
+  onChangeTodoDate,
   onChangeTodoFile,
-  onChangeTodoEndAt,
   onClickDeleteTodo,
   onSubmitModifyTodo,
-  onChangeTodoStartAt,
   onChangeTodoIsComplete,
   onClickCloseUpdateModal
 }) => {
@@ -74,7 +73,7 @@ const UpdateModal = ({
             <DatePicker
               dateFormat="yyyy-MM-dd hh:mm"
               selected={todo.startAt ? new Date(todo.startAt) : null}
-              onChange={onChangeTodoStartAt}
+              onChange={(startAt) => onChangeTodoDate("startAt", startAt)}
               showTimeSelect />
           </dd>
           <dt>종료 일시</dt>
@@ -82,7 +81,7 @@ const UpdateModal = ({
             <DatePicker
               dateFormat="yyyy-MM-dd hh:mm"
               selected={todo.endAt ? new Date(todo.endAt) : null}
-              onChange={onChangeTodoEndAt}
+              onChange={(endAt) => onChangeTodoDate("endAt", endAt)}
               showTimeSelect />
           </dd>
           <dt>내용</dt>
