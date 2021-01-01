@@ -15,8 +15,6 @@ const Todo = ({
        if (res.data.success) {
          deleteTodo(todoId);
          onDecreaseTodoCount();
-       } else {
-         alert("삭제하는 중, 에러가 발생하였습니다.");
        }
     });
   });

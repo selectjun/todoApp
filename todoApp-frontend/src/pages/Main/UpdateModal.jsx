@@ -2,17 +2,31 @@ import React from "react";
 import Modal from "react-modal";
 import DatePicker from "react-datepicker"
 
+import { API } from "@components/axios";
+
 const UpdateModal = ({
   todo,
   updateModalIsOpen,
+  deleteTodo,
   onChangeTodo,
   onChangeTodoDate,
   onChangeTodoFile,
-  onClickDeleteTodo,
   onSubmitModifyTodo,
+  onDecreaseTodoCount,
   onChangeTodoIsComplete,
   onClickCloseUpdateModal
 }) => {
+  const onClickDeleteTodoAfterCloseUpdateModal = () => {
+    const url = `/api/todo/${todo.todoId}/delete/`;
+    API.put(url).then(res => {
+      if (res.data.success) {
+        deleteTodo(todo.todoId);
+        onDecreaseTodoCount();
+        onClickCloseUpdateModal();
+      }
+    });
+  };
+
   const downloadFile = (url, name) => {
     API.get(url, { responseType: "blob" }).then((res) => {
       const downloadLink = window.URL.createObjectURL(new Blob([res.data], { type: res.headers["content-type"] }));
@@ -122,7 +136,7 @@ const UpdateModal = ({
           <button
             type="button"
             className="button cancel left"
-            onClick={onClickDeleteTodo}>삭제</button>
+            onClick={onClickDeleteTodoAfterCloseUpdateModal}>삭제</button>
           <button
             type="button"
             className="button submit right"

@@ -1,14 +1,30 @@
 import React from "react";
 
+import { API } from "@components/axios";
+
 import "./todoFooter.scss"
 
 const TodoFooter = ({
   filter,
   todoCount,
-  clearCompleted,
+  deleteTodo,
   onChangeFilter,
+  onDecreaseTodoCount,
   isClearCompleted,
 }) => {
+  // 완료된 To Do 일괄 삭제 처리
+  const clearCompleted = () => {
+    todoList.filter(todo => todo.isComplete).map(todo => {
+      const url = `/api/todo/${todo.todoId}/delete/`;
+      API.put(url).then(res => {
+        if (res.data.success) {
+          deleteTodo(todo.todoId);
+          onDecreaseTodoCount();
+        }
+      });
+    });
+  };
+
   return (
     todoCount
     ? <footer className="footer">

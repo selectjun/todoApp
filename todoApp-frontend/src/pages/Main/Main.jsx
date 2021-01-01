@@ -290,31 +290,6 @@ const Main = ({
     }
   });
 
-  // To Do 삭제
-  const onClickDeleteTodo = () => {
-    const url = `/api/todo/${todo.todoId}/delete/`;
-    API.put(url).then(res => {
-      if (res.data.success) {
-        deleteTodo(todo.todoId);
-        onDecreaseTodoCount();
-        onClickCloseUpdateModal();
-      }
-    });
-  };
-
-  // 완료된 To Do 일괄 삭제 처리
-  const clearCompleted = () => {
-    todoList.filter(todo => todo.isComplete).map(todo => {
-      const url = `/api/todo/${todo.todoId}/delete/`;
-      API.put(url).then(res => {
-        if (res.data.success) {
-          deleteTodo(todo.todoId);
-          onDecreaseTodoCount();
-        }
-      });
-    });
-  };
-
   // 초기화
   useEffect(() => {
     // To Do 목록 가져오기
@@ -364,18 +339,20 @@ const Main = ({
         <TodoFooter
           filter={filter}
           todoCount={todoCount}
-          clearCompleted={clearCompleted}
+          deleteTodo={deleteTodo}
           onChangeFilter={onChangeFilter}
+          onDecreaseTodoCount={onDecreaseTodoCount}
           isClearCompleted={todoCount - todoList.filter(todo => !todo.isComplete).length > 0} />
       </section>
       <UpdateModal
         todo={todo}
         updateModalIsOpen={updateModalIsOpen}
+        deleteTodo={deleteTodo}
         onChangeTodo={onChangeTodo}
         onChangeTodoDate={onChangeTodoDate}
         onChangeTodoFile={onChangeTodoFile}
-        onClickDeleteTodo={onClickDeleteTodo}
         onSubmitModifyTodo={onSubmitModifyTodo}
+        onDecreaseTodoCount={onDecreaseTodoCount}
         onChangeTodoIsComplete={onChangeTodoIsComplete}
         onClickCloseUpdateModal={onClickCloseUpdateModal} />
       <InsertModal
