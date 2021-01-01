@@ -18,6 +18,8 @@ const initialState = {
     todoId: "",
     title: "",
     contents: "",
+    startAt: null,
+    endAt: null, 
     file: null,
     createAt: null,
     updateAt: null,
@@ -28,6 +30,9 @@ const initialState = {
     todoId: "",
     title: "",
     contents: "",
+    startAt: null,
+    endAt: null,
+    fileId: null,
     file: {
       originalName: "",
       path: ""
@@ -100,7 +105,8 @@ const reducer = (state, action) => {
         ...state,
         todo: {
           ...state.todo,
-          file: action.file
+          file: action.file,
+          fileId: null
         }
       }
     case "CHANGE_TODO_IS_COMPLETE":
@@ -116,7 +122,7 @@ const reducer = (state, action) => {
         ...state,
         todo: {
           ... state.todo,
-          startAt: action.startAt
+          startAt: action.startAt ? action.startAt.toISOString() : ""
         }
       }
     case "CHANGE_END_AT":
@@ -124,7 +130,7 @@ const reducer = (state, action) => {
         ...state,
         todo: {
           ... state.todo,
-          endAt: action.endAt
+          endAt: action.endAt ? action.endAt.toISOString() : ""
         }
       }
     case "CHANGE_FILTER":
@@ -227,7 +233,14 @@ const Main = ({
   // To Do 수정
   const onSubmitModifyTodo = useCallback(() => {
     if (confirm("수정하시겠습니까?")) {
-      const url = `/api/todo/${todo.todoId}/?title=${todo.title}&isComplete=${todo.isComplete}&startAt=${todo.startAt}&endAt=${todo.endAt}&contents=${todo.contents}`;
+      const url = `/api/todo/${todo.todoId}/` +
+                  `?title=${todo.title}` +
+                  `&isComplete=${todo.isComplete}` +
+                  `&startAt=${todo.startAt}` +
+                  `&endAt=${todo.endAt}` +
+                  `&contents=${todo.contents}` +
+                  `&fileId=${todo.fileId}`;
+
       API.put(url, todo.file).then(res => {
         if (res.data.success) {
           updateTodo(todo);
@@ -267,11 +280,14 @@ const Main = ({
   const downloadFile = (url, name) => {
     API.get(url, { responseType: "blob" }).then((res) => {
       const downloadLink = window.URL.createObjectURL(new Blob([res.data], { type: res.headers["content-type"] }));
+      
       const link = document.createElement("a");
       link.setAttribute("href", downloadLink);
       link.setAttribute("download", name);
       document.body.appendChild(link);
       link.click();
+      
+      document.body.removeChild(link);
     });
   };
 
@@ -418,9 +434,11 @@ const Main = ({
                   todo.file.originalName
                   ? <ul>
                     <li>
-                      <button type="button"
-                        onClick={(e) => downloadFile(todo.file.path, todo.file.originalName)}>{todo.file.originalName}</button>
-                      <a href={todo.file.path}>{todo.file.originalName}</a>
+                      <a
+                        href="#"
+                        onClick={(e) => downloadFile(todo.file.path, todo.file.originalName)}>
+                        {todo.file.originalName}
+                      </a>
                     </li>
                   </ul>
                   : null
