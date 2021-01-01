@@ -333,25 +333,16 @@ router.put("/:todoId/delete/", (req, res) => {
 const createFile = async (req, res, data) => {
   let { fileId, file } = data;
 
-  console.log(file ? true: false);
-  console.log(fileId);
   if (!(fileId || file)) {
     // 삭제
     return null;
   } else if (file) {
     console.log("변경");
     // 변경
-    models.file.create({
+    return (await models.file.create({
       originalName: file.originalname,
       saveName: file.filename
-    }).then((file) => {
-      return file.fileId;
-    }).catch((err) => {
-      res.status(400).json({
-        success: false,
-        message: "허용되지 않은 파일입니다"
-      });
-    });
+    })).get({ plain: true }).fileId;
   } else {
     return fileId;
   }
