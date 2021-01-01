@@ -5,9 +5,9 @@ import "./todoFooter.scss"
 const TodoFooter = ({
   filter,
   todoCount,
-  isClearCompleted,
   clearCompleted,
-  onChangeFilter
+  onChangeFilter,
+  isClearCompleted,
 }) => {
   return (
     todoCount

@@ -385,16 +385,16 @@ const Main = ({
           todoList={todoList}
           deleteTodo={deleteTodo}
           completeTodo={completeTodo}
-          currentIsCompleteAll={currentIsCompleteAll}
-          onChangeCurrentIsCompleteAll={onChangeCurrentIsCompleteAll}
           onDecreaseTodoCount={onDecreaseTodoCount}
-          onClickOpenUpdateModal={onClickOpenUpdateModal} />
+          currentIsCompleteAll={currentIsCompleteAll}
+          onClickOpenUpdateModal={onClickOpenUpdateModal}
+          onChangeCurrentIsCompleteAll={onChangeCurrentIsCompleteAll} />
         <TodoFooter
           filter={filter}
           todoCount={todoCount}
-          isClearCompleted={todoCount - todoList.filter(todo => !todo.isComplete).length > 0}
           clearCompleted={clearCompleted}
-          onChangeFilter={onChangeFilter} />
+          onChangeFilter={onChangeFilter}
+          isClearCompleted={todoCount - todoList.filter(todo => !todo.isComplete).length > 0} />
       </section>
       <UpdateModal
         todo={todo}

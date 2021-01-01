@@ -10,10 +10,10 @@ const TodoList = ({
   todoList,
   deleteTodo,
   completeTodo,
-  currentIsCompleteAll,
-  onChangeCurrentIsCompleteAll,
   onDecreaseTodoCount,
-  onClickOpenUpdateModal
+  currentIsCompleteAll,
+  onClickOpenUpdateModal,
+  onChangeCurrentIsCompleteAll,
 }) => {
   return (
     <section className="main">
@@ -26,9 +26,9 @@ const TodoList = ({
         {
           todoList
           ? todoList.filter(todo => {
-            if (filter == "ACTIVE") return !todo.isComplete
-            else if (filter == "COMPLETED") return todo.isComplete
-            else return true;
+            if (filter == "ACTIVE") { return !todo.isComplete; }
+            else if (filter == "COMPLETED") { return todo.isComplete; }
+            else { return true; }
           }).map((todo, todoIndex) => {
             return (
               <Todo 
