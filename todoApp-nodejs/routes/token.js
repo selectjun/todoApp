@@ -41,9 +41,9 @@ router.post("/", tokenGetValid, (req, res, next) => {
       }
     }).then(count => {
       if (count < 1) {
-        res.status(200).json({
+        res.status(400).json({
           success: false,
-          message: "등록되지 않은 사용자 없습니다"
+          message: "등록되지 않은 사용자입니다"
         });
       } else {
         next();
