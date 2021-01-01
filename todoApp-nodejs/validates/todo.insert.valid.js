@@ -7,11 +7,8 @@ const todoInsertValid = [
     .custom((value, { req }) => /(\d{4})\-(\d{2})\-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})Z/.test(value) || value === "null" || value === "undefined" || value === "")
     .withMessage("[startAt] 타입이 맞지 않습니다"),
   check("endAt")
-    .custom((value, { req }) => /(\d{4})\-(\d{2})\-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})Z/.test(value) || value === "null" || value === "undefined" || value === "")
+  .custom((value, { req }) => /(\d{4})\-(\d{2})\-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})Z/.test(value) || value === "null" || value === "undefined" || value === "")
     .withMessage("[endAt] 타입이 맞지 않습니다"),
-  check("fileId")
-    .custom((value, { req }) => Number.isInteger(parseInt(value)) || value === "null" || value === "undefined" || value === "")
-    .withMessage("[fileId] 타입이 맞지 않습니다"),
   check("isComplete")
     .isBoolean().withMessage("[isComplete] 타입이 맞지 않습니다")
 ];
