@@ -194,16 +194,38 @@ router.post("/", todoInsertValid, (req, res) => {
       message: valid.errors[0].msg
     });
   } else {
-    models.todo.create(req.query).then(todo => {
-      res.status(200).json({
-        success: true,
-        todoId: todo.todoId
-      });
-    }).catch(err => {
-      res.status(500).json({
-        success: false,
-        message: err
-      });
+    todoUpload(req, res, async (err) => {
+      if(req.uploadError === "EXT_MISSMATCH") {
+        res.status(400).json({
+          success: false,
+          message: "허용되지 않는 파일입니다"
+        });
+      } else {
+        const fileId = req.file ? (await models.file.create({
+          originalName: req.file.originalname,
+          saveName: req.file.filename
+        })).get({ plain: true }).fileId : null;
+
+        models.todo.create({
+          title: req.query.title,
+          contents: req.query.contents,
+          startAt: req.query.startAt,
+          endAt: req.query.endAt,
+          isComplete: req.query.isComplete,
+          fileId: fileId,
+          userId: userId
+        }).then(todo => {
+          res.status(200).json({
+            success: true,
+            todoId: todo.todoId
+          });
+        }).catch(err => {
+          res.status(500).json({
+            success: false,
+            message: err
+          });
+        });
+      }
     });
   }
 });
@@ -235,7 +257,7 @@ router.put("/:todoId/", todoUpdateValid, asyncHandler(async (req, res) => {
           startAt: req.query.startAt,
           endAt: req.query.endAt,
           isComplete: req.query.isComplete,
-          fileId: await createFile(req, res, { fileId: req.query.fileId, file: req.file })
+          fileId: await createFile(req.query.fileId, req.file)
         }, {
           where: {
             todoId: todoId
@@ -327,23 +349,21 @@ router.put("/:todoId/delete/", (req, res) => {
 
 /**
  * 파일 생성
- * @param number fileId 
- * @param object file 
+ * @param {*} fileId 
+ * @param {*} file 
  */
-const createFile = async (req, res, data) => {
-  let { fileId, file } = data;
-
+const createFile = async (fileId, file) => {
   if (!(fileId || file)) {
     // 삭제
     return null;
   } else if (file) {
-    console.log("변경");
     // 변경
     return (await models.file.create({
       originalName: file.originalname,
       saveName: file.filename
     })).get({ plain: true }).fileId;
   } else {
+    // 유지
     return fileId;
   }
 }
