@@ -2,7 +2,8 @@ const express = require("express");
 const { validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
 const router = express.Router();
-var multer  = require("multer");
+const multer  = require("multer");
+const path = require("path");
 
 /**
  * 설정
@@ -47,14 +48,32 @@ const jwtProvider = require("../utils/security/jwt-provider.util");
 /**
  * To Do - Upload 설정
  */
-const todoUpload = multer({ storage: multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, config.upload.physicalPath + "/todo/")
+const todoUpload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, config.upload.physicalPath + "/todo/")
+    },
+    filename: function (req, file, cb) {
+      cb(null, "todo_" + Date.now())
+    }
+  }),
+  limits: {
+    fields: 1,
+    fileSize: 200 * 1024 * 1024,
   },
-  filename: function (req, file, cb) {
-    cb(null, "todo_" + Date.now())
+  fileFilter: (req, file, cb) => {
+    const allowExtNames = /jpeg|jpg|png|gif/;
+    const isMimeTypes = allowExtNames.test(file.mimetype);
+    const isExt = allowExtNames.test(path.extname(file.originalname).toLowerCase());
+
+    if (isMimeTypes && isExt) {
+      return cb(null, true);
+    } else {
+      req.uploadError = "EXT_MISSMATCH";
+      return cb(null, false, new Error("EXT_MISSMATCH"));
+    }
   }
-})});
+}).single("file");
 
 /**
  * To Do 목록 가져오기
@@ -192,9 +211,9 @@ router.post("/", todoInsertValid, (req, res) => {
 /**
  * To Do 수정하기
  */
-router.put("/:todoId/", [todoUpdateValid, todoUpload.single("file")], asyncHandler(async (req, res) => {
+router.put("/:todoId/", todoUpdateValid, asyncHandler(async (req, res) => {
   const valid = validationResult(req);
-  const todoId = req.params.todoId
+  const todoId = req.params.todoId;
 
   if (!valid.isEmpty()) {
     res.status(400).json({
@@ -203,34 +222,36 @@ router.put("/:todoId/", [todoUpdateValid, todoUpload.single("file")], asyncHandl
       message: valid.errors[0].msg
     });
   } else {
-    // TODO: 파일 유효성 체크
-    const file = req.file ? await models.file.create({
-      originalName: req.file.originalname,
-      saveName: req.file.filename
-    }) : null;
-
-    let data = {};
-    data = req.query.title ? { ...data, title: req.query.title } : title;
-    data = req.query.isComplete ? { ...data, isComplete: req.query.isComplete } : data;
-    data = req.query.startAt ? { ...data, startAt: req.query.startAt } : data;
-    data = req.query.endAt ? { ...data, endAt: req.query.endAt } : data;
-    data = req.query.contents ? { ...data, contents: req.query.contents } : data;
-    data = file ? { ...data, fileId: file.fileId } : data;
-
-    models.todo.update(data, {
-      where: {
-        todoId: todoId
+    todoUpload(req, res, async (err) => {
+      if(req.uploadError === "EXT_MISSMATCH") {
+        res.status(400).json({
+          success: false,
+          message: "허용되지 않는 파일입니다"
+        });
+      } else {
+        models.todo.update({
+          title: req.query.title,
+          contents: req.query.contents,
+          startAt: req.query.startAt,
+          endAt: req.query.endAt,
+          isComplete: req.query.isComplete,
+          fileId: await createFile(req, res, { fileId: req.query.fileId, file: req.file })
+        }, {
+          where: {
+            todoId: todoId
+          }
+        }).then(() => {
+          res.status(200).json({
+            success: true,
+            todoId: todoId
+          });
+        }).catch(err => {
+          res.status(500).json({
+            success: false,
+            message: err
+          });
+        });
       }
-    }).then(() => {
-      res.status(200).json({
-        success: true,
-        todoId: todoId
-      });
-    }).catch(err => {
-      res.status(500).json({
-        success: false,
-        message: err
-      });
     });
   };
 }));
@@ -303,5 +324,37 @@ router.put("/:todoId/delete/", (req, res) => {
     });
   }
 });
+
+/**
+ * 파일 생성
+ * @param number fileId 
+ * @param object file 
+ */
+const createFile = async (req, res, data) => {
+  let { fileId, file } = data;
+
+  console.log(file ? true: false);
+  console.log(fileId);
+  if (!(fileId || file)) {
+    // 삭제
+    return null;
+  } else if (file) {
+    console.log("변경");
+    // 변경
+    models.file.create({
+      originalName: file.originalname,
+      saveName: file.filename
+    }).then((file) => {
+      return file.fileId;
+    }).catch((err) => {
+      res.status(400).json({
+        success: false,
+        message: "허용되지 않은 파일입니다"
+      });
+    });
+  } else {
+    return fileId;
+  }
+}
 
 module.exports = router;
