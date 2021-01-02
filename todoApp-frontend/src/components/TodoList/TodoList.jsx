@@ -29,7 +29,7 @@ const TodoList = ({
             if (filter == "ACTIVE") { return !todo.isComplete; }
             else if (filter == "COMPLETED") { return todo.isComplete; }
             else { return true; }
-          }).map((todo, todoIndex) => {
+          }).sort((a, b) => b.todoId - a.todoId).map((todo, todoIndex) => {
             return (
               <Todo 
                 todo={todo}

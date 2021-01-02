@@ -182,21 +182,6 @@ const Main = ({
   const [insertModalIsOpen, setInsertModalIsOpen] = useState(false);
 
   const { todoCount, input, todo, filter, currentIsCompleteAll } = state;
-  
-  // 입력 데이터 변경 처리
-  const onChangeInput = useCallback((e) => {
-    const { name, value } = e.target;
-    dispatch({ type: "CHANGE_INPUT", name, value });
-  });
-
-  // 수정 데이터 변경 처리
-  const onChangeTodo = useCallback((e) => {
-    const { name, value } = e.target;
-    dispatch({ type: "CHANGE_TODO", name, value });
-  });
-
-  // INPUT 초기화
-  const onResetInput = useCallback(() => dispatch({ type: "RESET_INPUT" }));
 
   // 갯수 증가
   const onIncreaseTodoCount = useCallback(() => dispatch({ type: "INCREASE_TODO_COUNT" }));
@@ -209,6 +194,12 @@ const Main = ({
 
   // 토글 처리
   const onChangeCurrentIsCompleteAll = useCallback(() => dispatch({ type: "CHANGE_CURRENT_IS_COMPLETE_ALL" }));
+
+  // TODO 데이터 변경 처리
+  const onChangeTodo = useCallback((e) => {
+    const { name, value } = e.target;
+    dispatch({ type: "CHANGE_TODO", name, value });
+  });
   
   // TODO 일시 변경
   const onChangeTodoDate = useCallback((field, date) => dispatch({ type: "CHANGE_TODO_DATE", field: field, date: date }));
@@ -218,6 +209,15 @@ const Main = ({
 
   // TODO 완료 여부 변경
   const onChangeTodoIsComplete = useCallback(() => dispatch({ type: "CHANGE_TODO_IS_COMPLETE" }));
+
+  // INPUT 데이터 변경 처리
+  const onChangeInput = useCallback((e) => {
+    const { name, value } = e.target;
+    dispatch({ type: "CHANGE_INPUT", name, value });
+  });
+
+  // INPUT 초기화
+  const onResetInput = useCallback(() => dispatch({ type: "RESET_INPUT" }));
 
   // INPUT 일시 변경
   const onChangeInputDate = useCallback((field, date) => dispatch({ type: "CHANGE_INPUT_DATE", field: field, date: date }));
@@ -267,7 +267,7 @@ const Main = ({
         onResetInput();
         onClickCloseInertModal();
       }
-    })
+    });
   });
 
   // To Do 수정
@@ -338,6 +338,7 @@ const Main = ({
           onChangeCurrentIsCompleteAll={onChangeCurrentIsCompleteAll} />
         <TodoFooter
           filter={filter}
+          todoList={todoList}
           todoCount={todoCount}
           deleteTodo={deleteTodo}
           onChangeFilter={onChangeFilter}

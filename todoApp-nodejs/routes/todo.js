@@ -91,8 +91,11 @@ router.get("/", (req, res) => {
       isDelete: false,
       userId: userId
     },
-    limit: limit,
-    offset: offset
+    order: [
+      ["todoId", "DESC"]
+    ],
+    //limit: limit,
+    //offset: offset
   }).then(todoList => {
     res.status(200).json({
       success: true,

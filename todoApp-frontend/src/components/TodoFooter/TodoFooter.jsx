@@ -6,6 +6,7 @@ import "./todoFooter.scss"
 
 const TodoFooter = ({
   filter,
+  todoList,
   todoCount,
   deleteTodo,
   onChangeFilter,
