@@ -44,6 +44,7 @@ router.all("/*", auth);
  * JWT Provider
  */
 const jwtProvider = require("../utils/security/jwt-provider.util");
+const { isNull } = require("util");
 
 /**
  * To Do - Upload 설정
@@ -62,6 +63,7 @@ const todoUpload = multer({
     fileSize: 200 * 1024 * 1024,
   },
   fileFilter: (req, file, cb) => {
+    console.log("fdsfa");
     const allowExtNames = /jpeg|jpg|png|gif/;
     const isMimeTypes = allowExtNames.test(file.mimetype);
     const isExt = allowExtNames.test(path.extname(file.originalname).toLowerCase());
@@ -165,10 +167,12 @@ router.get("/:todoId/", (req, res) => {
         success: true,
         todo: {
           ...todo,
-          file: {
-            ...todo.file,
-            path: todo.fileId ? `/file/${todo.fileId}/` : null
-          }
+          file: todo.fileId 
+            ? {
+              ...todo.file,
+              path: todo.fileId ? `/file/${todo.fileId}/` : null
+            }
+            : null
         }
       });
     }).catch(err => {
@@ -254,28 +258,36 @@ router.put("/:todoId/", todoUpdateValid, asyncHandler(async (req, res) => {
           message: "허용되지 않는 파일입니다"
         });
       } else {
-        models.todo.update({
-          title: req.query.title,
-          contents: req.query.contents,
-          startAt: req.query.startAt,
-          endAt: req.query.endAt,
-          isComplete: req.query.isComplete,
-          fileId: await createFile(req.query.fileId, req.file)
-        }, {
-          where: {
-            todoId: todoId
-          }
-        }).then(() => {
-          res.status(200).json({
-            success: true,
-            todoId: todoId
+        try {
+          const fileId = await createFile(req.query.fileId, req.file);
+          models.todo.update({
+            title: req.query.title,
+            contents: req.query.contents,
+            startAt: req.query.startAt,
+            endAt: req.query.endAt,
+            isComplete: req.query.isComplete,
+            fileId: fileId
+          }, {
+            where: {
+              todoId: todoId
+            }
+          }).then(() => {
+            res.status(200).json({
+              success: true,
+              todoId: todoId
+            });
+          }).catch(err => {
+            res.status(500).json({
+              success: false,
+              message: err
+            });
           });
-        }).catch(err => {
-          res.status(500).json({
+        } catch (err) {
+          res.status(400).json({
             success: false,
             message: err
           });
-        });
+        }
       }
     });
   };
@@ -356,18 +368,36 @@ router.put("/:todoId/delete/", (req, res) => {
  * @param {*} file 
  */
 const createFile = async (fileId, file) => {
-  if (!(fileId || file)) {
+  const isFileId = (
+    fileId === null || fileId === undefined || fileId === NaN ||
+    fileId === "null" || fileId === "undefined" || fileId === "Nan" || fileId.tirm() === ""
+  ) ? false : true ;
+  const isFile = (
+    file === null || file === undefined || file === NaN ||
+    file === "null" || file === "undefined" || file === "Nan" || file.tirm() === ""
+  ) ? false : true;
+
+  console.log(fileId);
+  console.log(file);
+  console.log(isFileId);
+  console.log(isFile);
+  if (!isFileId && !isFile) {
     // 삭제
+    console.log("삭제");
     return null;
-  } else if (file) {
+  } else if (!isFileId && isFile) {
     // 변경
     return (await models.file.create({
       originalName: file.originalname,
       saveName: file.filename
     })).get({ plain: true }).fileId;
-  } else {
+  } else if (isFileId && !isFile) {
     // 유지
     return fileId;
+  } else {
+    // 예외
+    console.log("예외");
+    new Error("파일 요청 형식이 잘못되었습니다");
   }
 }
 
