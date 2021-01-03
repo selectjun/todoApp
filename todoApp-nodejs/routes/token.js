@@ -3,6 +3,11 @@ const { validationResult } = require('express-validator');
 const router = express.Router();
 
 /**
+ * Logging
+ */
+const { logger } = require("../config/winston");
+
+/**
  * JWT Provider
  */
 const jwtProvider = require("../utils/security/jwt-provider.util");
@@ -26,6 +31,7 @@ const tokenGetValid = require("../validates/token.get.valid");
  * Token 발급
  */
 router.post("/", tokenGetValid, (req, res, next) => {
+  logger.info("POST /api/token/");
   const valid = validationResult(req);
 
   if (!valid.isEmpty()) {
@@ -49,9 +55,10 @@ router.post("/", tokenGetValid, (req, res, next) => {
         next();
       }
     }).catch(err => {
+      logger.error(err.message);
       res.status(500).json({
         success: false,
-        message: err
+        message: "로그인 중 에러가 발생하였습니다\n다시 시도해주세요"
       });
     });
   }
@@ -77,16 +84,18 @@ router.post("/", tokenGetValid, (req, res, next) => {
           success: true
         });
       }).catch(err => {
+        logger.error(err.message);
         res.status(500).json({
           success: false,
-          message: err
+          message: "로그인 중 에러가 발생하였습니다\n다시 시도해주세요"
         });
       });
     }
   }).catch(err => {
+    logger.error(err.message);
     res.status(500).json({
       success: true,
-      message: err
+      message: "로그인 중 에러가 발생하였습니다\n다시 시도해주세요"
     });
   });
 });
