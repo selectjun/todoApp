@@ -63,7 +63,6 @@ const todoUpload = multer({
     fileSize: 200 * 1024 * 1024,
   },
   fileFilter: (req, file, cb) => {
-    console.log("fdsfa");
     const allowExtNames = /jpeg|jpg|png|gif/;
     const isMimeTypes = allowExtNames.test(file.mimetype);
     const isExt = allowExtNames.test(path.extname(file.originalname).toLowerCase());
