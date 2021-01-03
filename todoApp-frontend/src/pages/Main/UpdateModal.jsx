@@ -118,7 +118,7 @@ const UpdateModal = ({
                 onChangeTodoFile(file);
               }} />
               {
-                todo.file.originalName
+                todo.file
                 ? <ul>
                   <li>
                     <a

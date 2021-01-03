@@ -33,10 +33,7 @@ const initialState = {
     startAt: null,
     endAt: null,
     fileId: null,
-    file: {
-      originalName: "",
-      path: ""
-    },
+    file: null,
     createAt: null,
     updateAt: null,
     isComplete: false,
