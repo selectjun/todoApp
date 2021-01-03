@@ -6,6 +6,11 @@ const multer  = require("multer");
 const path = require("path");
 
 /**
+ * Logging
+ */
+const { logger } = require("../config/winston");
+
+/**
  * 설정
  */
 const config = require("../config/config.json").dev;
@@ -44,7 +49,6 @@ router.all("/*", auth);
  * JWT Provider
  */
 const jwtProvider = require("../utils/security/jwt-provider.util");
-const { isNull } = require("util");
 
 /**
  * To Do - Upload 설정
@@ -80,6 +84,7 @@ const todoUpload = multer({
  * To Do 목록 가져오기
  */
 router.get("/", (req, res) => {
+  logger.info("GET /api/todo/");
   const page = (!isNaN(req.query.page) && req.query.page > 0) ? req.query.page : 1;
   const limit = RECORDS_PER_PAGE;
   const offset = RECORDS_PER_PAGE * (page - 1);
@@ -103,9 +108,10 @@ router.get("/", (req, res) => {
       todoList: todoList
     });
   }).catch(err => {
+    logger.error(err.message);
     res.status(500).json({
       success: false,
-      message: err
+      message: "에러가 발생하였습니다\n다시 시도해주세요"
     });
   });
 });
@@ -114,6 +120,7 @@ router.get("/", (req, res) => {
  * To Do 전체 개수 가져오기
  */
 router.get("/count/", (req, res) => {
+  logger.info("GET /api/todo/count/");
   const token = jwtProvider.resolveToken(req);
   const userId = jwtProvider.getUserPk(token);
 
@@ -128,9 +135,10 @@ router.get("/count/", (req, res) => {
      count: count
    });
   }).catch(err => {
+    looger.error(err.message);
     res.status(500).json({
       success: false,
-      message: err
+      message: "에러가 발생하였습니다\n다시 시도해주세요"
     });
   });
 });
@@ -139,6 +147,7 @@ router.get("/count/", (req, res) => {
  * To Do 가져오기
  */
 router.get("/:todoId/", (req, res) => {
+  logger.info("GET /api/todo/:todoId/");
   const todoId = req.params.todoId;
   
   if (!todoId) {
@@ -175,9 +184,10 @@ router.get("/:todoId/", (req, res) => {
         }
       });
     }).catch(err => {
+      logger.error(err.message);
       res.status(500).json({
         success: false,
-        message: err
+        message: "에러가 발생하였습니다\n다시 시도해주세요"
       });
     });
   }
@@ -187,6 +197,7 @@ router.get("/:todoId/", (req, res) => {
  * To Do 등록하기
  */
 router.post("/", todoInsertValid, (req, res) => {
+  logger.info("POST /api/todo/");
   const valid = validationResult(req);
 
   const token = jwtProvider.resolveToken(req);
@@ -226,9 +237,10 @@ router.post("/", todoInsertValid, (req, res) => {
             todoId: todo.todoId
           });
         }).catch(err => {
+          logger.error(err.message);
           res.status(500).json({
             success: false,
-            message: err
+            message: "에러가 발생하였습니다\n다시 시도해주세요"
           });
         });
       }
@@ -240,6 +252,7 @@ router.post("/", todoInsertValid, (req, res) => {
  * To Do 수정하기
  */
 router.put("/:todoId/", todoUpdateValid, asyncHandler(async (req, res) => {
+  logger.info("PUT /api/todo/:todoId/");
   const valid = validationResult(req);
   const todoId = req.params.todoId;
 
@@ -276,15 +289,17 @@ router.put("/:todoId/", todoUpdateValid, asyncHandler(async (req, res) => {
               todoId: todoId
             });
           }).catch(err => {
+            logger.error(err.message);
             res.status(500).json({
               success: false,
-              message: err
+              message: "에러가 발생하였습니다\n다시 시도해주세요"
             });
           });
         } catch (err) {
+          logger.error(err.message);
           res.status(400).json({
             success: false,
-            message: err
+            message: "에러가 발생하였습니다\n다시 시도해주세요"
           });
         }
       }
@@ -296,6 +311,7 @@ router.put("/:todoId/", todoUpdateValid, asyncHandler(async (req, res) => {
  * To Do 완료하기
  */
 router.put("/:todoId/complete/", (req, res) => {
+  logger.info("PUT /api/todo/:todoId/complete/");
   const todoId = req.params.todoId
   
   if (!todoId) {
@@ -317,15 +333,17 @@ router.put("/:todoId/complete/", (req, res) => {
           todoId: todoId
         });
       }).catch(err => {
+        logger.error(err.message);
         res.status(500).json({
           success: false,
-          message: err
+          message: "에러가 발생하였습니다\n다시 시도해주세요"
         });
       });
     }).catch(err => {
+      logger.error(err.message);
       res.status(500).json({
         success: false,
-        message: err
+        message: "에러가 발생하였습니다\n다시 시도해주세요"
       });
     });;
   }
@@ -335,6 +353,7 @@ router.put("/:todoId/complete/", (req, res) => {
  * To Do 삭제하기
  */
 router.put("/:todoId/delete/", (req, res) => {
+  logger.info("PUT /api/todo/:todoId/delete/");
   const todoId = req.params.todoId;
 
   if (!todoId) {
@@ -353,9 +372,10 @@ router.put("/:todoId/delete/", (req, res) => {
         todoId: todoId
       });
     }).catch(err => {
+      logger.error(err.message);
       res.status(500).json({
         success: false,
-        message: err
+        message: "에러가 발생하였습니다\n다시 시도해주세요"
       });
     });
   }
@@ -376,26 +396,20 @@ const createFile = async (fileId, file) => {
     file === "null" || file === "undefined" || file === "Nan" || file.tirm() === ""
   ) ? false : true;
 
-  console.log(fileId);
-  console.log(file);
-  console.log(isFileId);
-  console.log(isFile);
   if (!isFileId && !isFile) {
-    // 삭제
-    console.log("삭제");
+    logger.debug("Called createFile - DELETE");
     return null;
   } else if (!isFileId && isFile) {
-    // 변경
+    logger.debug("Called createFile - INSERT/CHANGE");
     return (await models.file.create({
       originalName: file.originalname,
       saveName: file.filename
     })).get({ plain: true }).fileId;
   } else if (isFileId && !isFile) {
-    // 유지
+    logger.debug("Called createFile - KEEP");
     return fileId;
   } else {
-    // 예외
-    console.log("예외");
+    logger.error("Called CreateFile");
     new Error("파일 요청 형식이 잘못되었습니다");
   }
 }
