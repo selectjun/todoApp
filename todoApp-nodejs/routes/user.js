@@ -1,7 +1,12 @@
 const express = require("express");
-const { validationResult } = require('express-validator');
+const { validationResult } = require("express-validator");
 const router = express.Router();
 const Op = require("sequelize").Op;
+
+/**
+ * Logging
+ */
+const { logger } = require("../config/winston");
 
 /**
  * Database Models
@@ -14,9 +19,24 @@ const { models } = require('../sequelize');
 const userInsertValid = require("../validates/user.insert.valid");
 
 /**
+ * User 비밀번호 찾기 유효성 객체
+ */
+const userFindPassword = require("../validates/userFindPassword.post.valid");
+
+/**
+ * 메일 객체
+ */
+const mail = require("../utils/mail.util");
+
+/**
  * AES-256 암호화 객체
  */
 const aes256 = require("../utils/security/aes256.util");
+
+/**
+ * SHA-256 암호화 객체
+ */
+const sha256 = require("sha256");
 
 /**
  * JWT Provider
@@ -245,5 +265,135 @@ router.put("/", (req, res, next) => {
     });
   });
 });
+
+/**
+ * 사용자 아이디 찾기
+ */
+router.post("/find/id/", (req, res) => {
+  const email = req.query.email.trim();
+
+  if (!email) {
+    res.status(400).json({
+      success: false,
+      message: "이메일 형식에 맞게 입력해주세요"
+    });
+  } else {
+    models.user.findOne({
+      where: {
+        email: aes256.encrypt(email)
+      }
+    }).then((user) => {
+      if (!user) {
+        res.status(400).json({
+          success: false,
+          message: "회원정보가 존재하지 않습니다\n다시 시도해주세요"
+        });
+      } else {
+        res.status(200).json({
+          success: true,
+          message: "조회가 완료 되었습니다",
+          id: user.id
+        });
+      }
+    }).catch((err) => {
+      logger.error(err.message);
+      res.status(500).json({
+        success: false,
+        message: "에러가 발생하였습니다\n다시 시도해주세요"
+      });
+    });
+  }
+});
+
+/**
+ * 사용자 비밀번호 찾기
+ */
+router.post("/find/password/", userFindPassword, (req, res) => {
+  const valid = validationResult(req);
+  const id = req.query.id;
+  const email = req.query.email;
+
+  if (!valid.isEmpty()) {
+    res.status(400).json({
+      success: false,
+      param: valid.errors[0].param,
+      message: valid.errors[0].msg
+    });
+  } else {
+    models.user.findOne({
+      where: {
+        id: id,
+        email: aes256.encrypt(email)
+      }
+    }).then((user) => {
+      if (!user) {
+        res.status(400).json({
+          success: false,
+          message: "회원정보가 존재하지 않습니다\n다시 시도해주세요"
+        });
+      } else {
+        const password = generatePassword();
+
+        models.user.update({
+          password: sha256(password)
+        }, {
+          where: {
+            id: user.id
+          }
+        }).then(() => {
+          sendFindPasswordMail({
+            id: user.id,
+            password: password,
+            name: user.name
+          });
+          res.status(200).json({
+            success: true,
+            message: "조회가 완료 되었습니다",
+            id: user.id
+          });
+        }).catch((err) => {
+          logger.error(err.message);
+          res.status(500).json({
+            success: false,
+            message: "에러가 발생하였습니다\n다시 시도해주세요"
+          });
+        });
+      }
+    }).catch((err) => {
+      logger.error(err.message);
+      res.status(500).json({
+        success: false,
+        message: "에러가 발생하였습니다\n다시 시도해주세요"
+      });
+    });
+  }
+});
+
+/**
+ * 패스워드 랜덤 생성
+ * @return string 패스워드
+ */
+const generatePassword = () => {
+  const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz!@#$%^&*";
+  const stringLength = 8;
+
+  var randomString = "";
+  for (let i = 0; i < stringLength; i++) {
+    let randomNum = Math.floor(Math.random() * chars.length);
+    randomString += chars.substring(randomNum, randomNum + 1);
+  }
+
+  return randomString;
+}
+
+/**
+ * 임시 비밀번호 메일 발송
+ * @param {*} data 
+ */
+const sendFindPasswordMail = (data) => {
+  logger.info("Send mail for passsword find.");
+  // TODO: 메일 발송 로직 작성
+  mail.send();
+}
 
 module.exports = router;
