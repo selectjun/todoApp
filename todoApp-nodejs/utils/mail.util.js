@@ -3,7 +3,7 @@ const nodemailer = require("nodemailer");
 /**
  * 설정
  */
-const config = require("../config/config.json").dev;
+const config = require("../utils/config.util").getConfg();
 
 /**
  * SMTP 접속 정보

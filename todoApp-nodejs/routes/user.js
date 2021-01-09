@@ -11,7 +11,7 @@ const { logger } = require("../config/winston");
 /**
  * 설정
  */
-const config = require("../config/config.json").dev;
+const config = require("../utils/config.util").getConfg();
 
 /**
  * Database Models

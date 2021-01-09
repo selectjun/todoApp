@@ -10,7 +10,7 @@ const { models } = require('../sequelize');
 /**
  * 설정
  */
-const config = require("../config/config.json").dev;
+const config = require("../utils/config.util").getConfg();
 
 /**
  * 인증

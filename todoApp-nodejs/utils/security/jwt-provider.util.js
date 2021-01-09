@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const config = require("../../config/config.json").dev;
+const config = require("../../utils/config.util").getConfg();
 
 /**
  * JWT Token 생성

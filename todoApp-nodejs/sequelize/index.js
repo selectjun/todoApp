@@ -4,7 +4,7 @@ const { applyExtraSetup } = require('./extra-setup');
 /**
  * 설정
  */
-const config = require("../config/config.json").dev;
+const config = require("../utils/config.util").getConfg();
 
 const sequelize = new Sequelize(
   // Schema Name
