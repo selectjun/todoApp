@@ -21,17 +21,15 @@ module.exports = {
    * @param {*} data 
    */
   send: (data) => {
-    logger.info("Send mail.");
-    console.log(data);
     try {
-      let message = {
+      let transporter = nodemailer.createTransport(SMTPConnection);
+      transporter.sendMail({
         from: config.mail.from,
         to: data.to,
         subject: data.subject,
         html: data.html
-      };
-      let transporter = nodemailer.createTransport(SMTPConnection);
-      transporter.sendMail(message);
+      });
+      logger.info("Send mail.");
     } catch (err) {
       logger.error(error);
     }
