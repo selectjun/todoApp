@@ -433,15 +433,13 @@ const generatePassword = () => {
  * @param {*} data 
  */
 const sendFindPasswordMail = (data) => {
-  console.log(data);
   logger.info("Send mail for passsword find.");
-  // TODO: 메일 발송 로직 작성
   mail.send({
     to: data.to,
     subject: "[TODO] 임시 비밀번호 발송",
     html: `<h1>${data.name} 님</h1>` +
           `임시 비밀번호: ${data.password}<br />` +
-          `<a href="${config.siteURL}">로그인하러 가기</a>`
+          `<a href="http://localhost:9000/">로그인하러 가기</a>`
   });
 }
 
