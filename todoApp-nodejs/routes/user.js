@@ -9,6 +9,11 @@ const Op = require("sequelize").Op;
 const { logger } = require("../config/winston");
 
 /**
+ * 설정
+ */
+const config = require("../config/config.json").dev;
+
+/**
  * Database Models
  */
 const { models } = require('../sequelize');
@@ -380,7 +385,8 @@ router.post("/find/password/", userFindPasswordValid, (req, res) => {
           sendFindPasswordMail({
             id: user.id,
             password: password,
-            name: user.name
+            name: user.name,
+            to: aes256.decrypt(user.email)
           });
           res.status(200).json({
             success: true,
@@ -427,9 +433,16 @@ const generatePassword = () => {
  * @param {*} data 
  */
 const sendFindPasswordMail = (data) => {
+  console.log(data);
   logger.info("Send mail for passsword find.");
   // TODO: 메일 발송 로직 작성
-  mail.send();
+  mail.send({
+    to: data.to,
+    subject: "[TODO] 임시 비밀번호 발송",
+    html: `<h1>${data.name} 님</h1>` +
+          `임시 비밀번호: ${data.password}<br />` +
+          `<a href="${config.siteURL}">로그인하러 가기</a>`
+  });
 }
 
 module.exports = router;
