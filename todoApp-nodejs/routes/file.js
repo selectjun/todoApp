@@ -48,7 +48,6 @@ router.get("/:fileId/", (req, res) => {
             message: "파일이 존재하지 않습니다"
           });
         }
-        // TODO: 현재 다운로드가 되지 않고 있음.
         const fileStream = fs.createReadStream(path);
         fileStream.pipe(res);
       });

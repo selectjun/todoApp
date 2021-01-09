@@ -14,14 +14,24 @@ const { logger } = require("../config/winston");
 const { models } = require('../sequelize');
 
 /**
- * User 유효성 객체
+ * User 등록 유효성 객체
  */
 const userInsertValid = require("../validates/user.insert.valid");
 
 /**
+ * User 수정 유효성 객체
+ */
+const userUpdateValid = require("../validates/user.update.valid");
+
+/**
+ * User 아이디 찾기 유효성 객체
+ */
+const userFindIdValid = require("../validates/user.findId.valid");
+
+/**
  * User 비밀번호 찾기 유효성 객체
  */
-const userFindPassword = require("../validates/userFindPassword.post.valid");
+const userFindPasswordValid = require("../validates/user.findPassword.valid");
 
 /**
  * 메일 객체
@@ -47,6 +57,7 @@ const jwtProvider = require("../utils/security/jwt-provider.util");
  * 사용자 등록
  */
 router.post("/", userInsertValid, (req, res, next) => {
+  logger.info("POST /api/user/");
   const valid = validationResult(req);
 
   if (!valid.isEmpty()) {
@@ -60,7 +71,7 @@ router.post("/", userInsertValid, (req, res, next) => {
       where: {
         id: req.query.id
       }
-    }).then(count => {
+    }).then((count) => {
       if (count > 0) {
         res.status(400).json({
           success: false,
@@ -70,10 +81,11 @@ router.post("/", userInsertValid, (req, res, next) => {
         req.query.email = aes256.encrypt(req.query.email);
         next();
       }
-    }).catch(err => {
+    }).catch((err) => {
+      logger.error(err.message);
       res.status(500).json({
         success: false,
-        message: err
+        message: "에러가 발생하였습니다\n다시 시도해주세요"
       });
     });
   }
@@ -81,14 +93,14 @@ router.post("/", userInsertValid, (req, res, next) => {
   models.user.create(req.query).then(user => {
     req.query.user = user;
     next();
-  }).catch(err => {
+  }).catch((err) => {
+    logger.error(err.message);
     res.status(500).json({
       success: false,
-      message: err
+      message: "에러가 발생하였습니다\n다시 시도해주세요"
     });
   });
 }, (req, res) => {
-  console.log(req.query);
   models.userAuthority.create({
     userId: req.query.id,
     authorityName: "ROLE_USER"
@@ -98,9 +110,10 @@ router.post("/", userInsertValid, (req, res, next) => {
       id: req.query.id
     });
   }).catch(err => {
+    logger.error(err.message);
     res.status(500).json({
       success: false,
-      message: err
+      message: "에러가 발생하였습니다\n다시 시도해주세요"
     });
   });
 });
@@ -109,6 +122,7 @@ router.post("/", userInsertValid, (req, res, next) => {
  * 사용자 패스워드 일치 여부 조회
  */
 router.post("/password/:password/", (req, res, next) => {
+  logger.info(`POST /api/user/password/${req.params.password}/`);
   const token = jwtProvider.resolveToken(req);
   if (jwtProvider.validToken(token)) {
     next();
@@ -128,7 +142,7 @@ router.post("/password/:password/", (req, res, next) => {
       id: id,
       password: password
     }
-  }).then(count => {
+  }).then((count) => {
     if (count > 0) {
       res.status(200).json({
         success: true,
@@ -140,10 +154,11 @@ router.post("/password/:password/", (req, res, next) => {
         message: "패스워드가 일치하지 않습니다"
       });
     }
-  }).catch(err => {
+  }).catch((err) => {
+    logger.error(err.message);
     res.status(500).json({
       success: false,
-      message: err
+      message: "에러가 발생하였습니다\n다시 시도해주세요"
     });
   });
 });
@@ -152,6 +167,7 @@ router.post("/password/:password/", (req, res, next) => {
  * 사용자 정보 조회
  */
 router.get("/", (req, res, next) => {
+  logger.info("GET /api/user/");
   const token = jwtProvider.resolveToken(req);
   if (jwtProvider.validToken(token)) {
     next();
@@ -171,7 +187,7 @@ router.get("/", (req, res, next) => {
       id: id,
       password: password
     }
-  }).then(count => {
+  }).then((count) => {
     if (count > 0) {
       models.user.findOne({
         where: {
@@ -180,28 +196,30 @@ router.get("/", (req, res, next) => {
         attributes: {
           exclude: ["password"]
         }
-      }).then(user => {
+      }).then((user) => {
         user.email = aes256.decrypt(user.email);
         res.status(200).json({
           success: 200,
           user: user
         });
-      }).catch(err => {
+      }).catch((err) => {
+        logger.error(err.message);
         res.status(500).json({
           success: false,
-          message: err
+          message: "에러가 발생하였습니다\n다시 시도해주세요"
         });
       });
     } else {
-      res.status(500).json({
+      res.status(400).json({
         success: false,
-        message: "잘못된 접근입니다"
+        message: "사용자 정보가 존재하지 않습니다"
       });
     }
-  }).catch(err => {
+  }).catch((err) => {
+    logger.error(err.message);
     res.status(500).json({
       success: false,
-      message: err
+      message: "에러가 발생하였습니다\n다시 시도해주세요"
     });
   });
 });
@@ -209,7 +227,8 @@ router.get("/", (req, res, next) => {
 /**
  * 사용자 정보 수정
  */
-router.put("/", (req, res, next) => {
+router.put("/", userUpdateValid, (req, res, next) => {
+  logger.info("PUT /api/user/");
   const token = jwtProvider.resolveToken(req);
   if (jwtProvider.validToken(token)) {
     next();
@@ -220,64 +239,79 @@ router.put("/", (req, res, next) => {
     });
   }
 }, (req, res) => {
-  const token = jwtProvider.resolveToken(req);
-  const id = jwtProvider.getUserPk(token);
-  const currentPassword = req.query.currentPassword;
+  const valid = validationResult(req);
 
-  models.user.count({
-    where: {
-      id: id,
-      password: currentPassword
-    }
-  }).then(count => {
-    let data = {};
-    data = req.query.password ? {...data, password: req.query.password} : data;
-    data = req.query.name ? {...data, name: req.query.name} : data;
-    data = req.query.email ? {...data, email: aes256.encrypt(req.query.email)} : data;
+  if (!valid.isEmpty()) {
+    res.status(400).json({
+      success: false,
+      param: valid.errors[0].param,
+      message: valid.errors[0].msg
+    });
+  } else {
+    const token = jwtProvider.resolveToken(req);
+    const id = jwtProvider.getUserPk(token);
+    const currentPassword = req.query.currentPassword;
 
-    if (count > 0) {
-      models.user.update(data, {
-        where: {
-          id: id
-        }
-      }).then(() => {
-        res.status(200).json({
-          success: 200,
-          message: "회원정보가 수정되었습니다",
-          id: id
+    models.user.count({
+      where: {
+        id: id,
+        password: currentPassword
+      }
+    }).then((count) => {
+      if (count > 0) {
+        models.user.update({
+          password: sha256(req.query.password),
+          name: req.query.name,
+          email: aes256.encrypt(req.query.email)
+        }, {
+          where: {
+            id: id
+          }
+        }).then(() => {
+          res.status(200).json({
+            success: 200,
+            message: "회원정보가 수정되었습니다",
+            id: id
+          });
+        }).catch((err) => {
+          logger.error(err.message);
+          res.status(500).json({
+            success: false,
+            message: "에러가 발생하였습니다\n다시 시도해주세요"
+          });
         });
-      }).catch(err => {
-        res.status(500).json({
+      } else {
+        res.status(400).json({
           success: false,
-          message: err
+          message: "현재 패스워드가 일치하지 않습니다"
         });
-      });
-    } else {
+      }
+    }).catch((err) => {
+      logger.error(err.message);
       res.status(500).json({
         success: false,
-        message: "현재 패스워드가 일치하지 않습니다"
+        message: "에러가 발생하였습니다\n다시 시도해주세요"
       });
-    }
-  }).catch(err => {
-    res.status(500).json({
-      success: false,
-      message: err
     });
-  });
+  }
 });
 
 /**
  * 사용자 아이디 찾기
  */
-router.post("/find/id/", (req, res) => {
-  const email = req.query.email.trim();
+router.post("/find/id/", userFindIdValid, (req, res) => {
+  logger.info("POST /api/user/find/id/");
+  const valid = validationResult(req);
 
-  if (!email) {
+  if (!valid.isEmpty()) {
     res.status(400).json({
       success: false,
-      message: "이메일 형식에 맞게 입력해주세요"
+      param: valid.errors[0].param,
+      message: valid.errors[0].msg
     });
   } else {
+    const email = req.query.email;
+
     models.user.findOne({
       where: {
         email: aes256.encrypt(email)
@@ -308,10 +342,9 @@ router.post("/find/id/", (req, res) => {
 /**
  * 사용자 비밀번호 찾기
  */
-router.post("/find/password/", userFindPassword, (req, res) => {
+router.post("/find/password/", userFindPasswordValid, (req, res) => {
+  logger.info("POST /api/user/find/password/");
   const valid = validationResult(req);
-  const id = req.query.id;
-  const email = req.query.email;
 
   if (!valid.isEmpty()) {
     res.status(400).json({
@@ -320,6 +353,9 @@ router.post("/find/password/", userFindPassword, (req, res) => {
       message: valid.errors[0].msg
     });
   } else {
+    const id = req.query.id;
+    const email = req.query.email;
+
     models.user.findOne({
       where: {
         id: id,

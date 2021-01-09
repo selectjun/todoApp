@@ -135,7 +135,7 @@ router.get("/count/", (req, res) => {
      count: count
    });
   }).catch(err => {
-    looger.error(err.message);
+    logger.error(err.message);
     res.status(500).json({
       success: false,
       message: "에러가 발생하였습니다\n다시 시도해주세요"
@@ -147,7 +147,7 @@ router.get("/count/", (req, res) => {
  * To Do 가져오기
  */
 router.get("/:todoId/", (req, res) => {
-  logger.info("GET /api/todo/:todoId/");
+  logger.info(`GET /api/todo/${req.params.todoId}/`);
   const todoId = req.params.todoId;
   
   if (!todoId) {

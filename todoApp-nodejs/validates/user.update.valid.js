@@ -1,8 +1,8 @@
 const { check } = require("express-validator");
 
-const userInsertValid = [
-  check("id").trim()
-    .not().isEmpty().withMessage("아이디를 입력해주세요"),
+const userUpdateValid = [
+  check("currentPassword").trim()
+    .not().isEmpty().withMessage("암호를 입력해주세요"),
   check("password").trim()
     .not().isEmpty().withMessage("암호를 입력해주세요"),
   check("name").trim()
@@ -12,4 +12,4 @@ const userInsertValid = [
     .isEmail().withMessage("이메일 형식에 맞게 입력해주세요"),
 ];
 
-module.exports = userInsertValid;
+module.exports = userUpdateValid;
