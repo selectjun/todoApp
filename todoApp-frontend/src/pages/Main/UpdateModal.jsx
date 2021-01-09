@@ -122,8 +122,11 @@ const UpdateModal = ({
                 ? <ul>
                   <li>
                     <a
-                      href="#"
-                      onClick={(e) => downloadFile(todo.file.path, todo.file.originalName)}>
+                      href={todo.file.path}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        downloadFile(todo.file.path, todo.file.originalName);
+                      }}>
                       {todo.file.originalName}
                     </a>
                   </li>

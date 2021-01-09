@@ -15,12 +15,12 @@ const config = require("../config/config.json").dev;
 /**
  * 인증
  */
-//const { auth } = require("./auth");
+const { auth } = require("./auth");
 
 /**
  * Auth Interceptor
  */
-//router.all("/*", auth);
+router.all("/*", auth);
 
 /**
  * 사용자 등록
@@ -39,7 +39,6 @@ router.get("/:fileId/", (req, res) => {
         fileId: fileId
       }
     }).then(file => {
-      // TODO: 절대경로, 상대경로에 따른 쉬운 저장위치 변경이 가능하도록 처리
       const path = `${__dirname}/../${config.upload.physicalPath}/${"todo"}/${file.saveName}`;
       fs.access(path, fs.F_OK, (err) => {
         if (err) {
