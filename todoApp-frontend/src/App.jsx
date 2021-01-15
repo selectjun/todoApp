@@ -21,6 +21,11 @@ const App = ()=> {
             <Route path="/login" component={Login} />
             <Route path="/join" component={Join} />
             <Route path="/user" component={User} />
+            {
+              sessionStorage.getItem("xAuthToken")
+              ? <Redirect from="/" to="/login" />
+              : <Redirect from="/" to="/login" />
+            }
           </Switch>
         </>
     </Router>
