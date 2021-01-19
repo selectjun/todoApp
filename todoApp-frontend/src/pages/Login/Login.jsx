@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 import sha256 from "sha256";
 
-import Header from "@components/Header"
+import Header from "@components/Header";
+import UserBox from "@components/UserBox";
 import { API } from "@components/axios";
 
 import "./login.scss"
 
 const Login = () => {
+  const history = useHistory();
   const [loginData, setLoginData] = useState({id: "", password: ""});
 
   useEffect(() => {
     return () => {
       if (sessionStorage.getItem("xAuthToken")) {
-        window.location.href = "/";
+        history.push("/");
       }
     }
   }, []);
@@ -34,7 +36,7 @@ const Login = () => {
     } else {
       const url = `/api/token/?id=${loginData.id}&password=${sha256(loginData.password)}`;
       API.post(url).then(res => {
-        window.location.href = "/todo";
+        history.push("/todo");
       });
     }
   }
@@ -50,8 +52,8 @@ const Login = () => {
           id="id"
           placeholder="ID"
           value={loginData.id}
-          onKeyDown={e => e.key == "Enter" ? submitLogin() : false}
-          onChange={e => handleLoginData("id", e.target.value) } />
+          onKeyDown={(e) => e.key == "Enter" ? submitLogin() : false}
+          onChange={(e) => handleLoginData("id", e.target.value) } />
         <br />
         <input
           type="password"
@@ -60,23 +62,15 @@ const Login = () => {
           id="password"
           placeholder="Password"
           value={loginData.password}
-          onKeyDown={e => {
-            if(e.key == "Enter") {
-              submitLogin();
-            }
-          }}
-          onChange={e => handleLoginData("password", e.target.value)} />
+          onKeyDown={(e) => e.key == "Enter" ? submitLogin() : false}
+          onChange={(e) => handleLoginData("password", e.target.value)} />
           <br />
           <button
             type="button"
             className="login-btn"
             onClick={submitLogin}>LOGIN</button>
       </section>
-      <div className="user-box">
-        <a href="/join">회원가입</a>
-        <br />
-        <a href="#">아이디/암호 찾기</a>
-      </div>
+      <UserBox page={"LOGIN"} />
     </div>
   );
 }

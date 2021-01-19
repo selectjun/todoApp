@@ -101,6 +101,10 @@ body {
 
         a {
           color: #000;
+
+          &:hover {
+            font-weight: bold;
+          }
         }
       }
     }

@@ -1,7 +1,9 @@
 import React, { useEffect, useReducer } from "react";
+import { Link } from "react-router-dom";
 import sha256 from "sha256";
 
-import Header from "@components/Header"
+import Header from "@components/Header";
+import UserBox from "@components/UserBox";
 import validater from "@helpers/validate.helper.js"
 
 import { API } from "@components/axios";
@@ -84,7 +86,7 @@ const Join = () => {
   return (
     <div className="container join">
       <Header />
-      <section className="contents">
+      <section className="contents white shadow">
         <input
           type="text"
           name="id"
@@ -125,11 +127,7 @@ const Join = () => {
             className="login-btn"
             onClick={onSubmitJoin}>JOIN</button>
       </section>
-      <div className="user-box">
-        <a href="/login">로그인</a>
-        <br />
-        <a href="#">아이디/암호 찾기</a>
-      </div>
+      <UserBox page={"JOIN"} />
     </div>
   );
 }
