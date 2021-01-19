@@ -11,8 +11,18 @@ import MainContainer from "./containers/MainContainer";
 import Login from "./pages/Login";
 import Join from "./pages/Join";
 import User from "./pages/User";
+import Find from "./pages/Find";
 
 const App = ()=> {
+  const renderRoute = (Componentx) => {
+    return (props) => {
+      const newProps = {
+        ...props,
+      };
+      return <Component {...newProps} />;
+    };
+  };
+
   return(
     <Router>
         <>
@@ -21,10 +31,11 @@ const App = ()=> {
             <Route path="/login" component={Login} />
             <Route path="/join" component={Join} />
             <Route path="/user" component={User} />
-            {
+            <Route path="/find/:target" component={Find} />
+            { 
               sessionStorage.getItem("xAuthToken")
-              ? <Redirect from="/" to="/login" />
-              : <Redirect from="/" to="/login" />
+              ? <Redirect to="/todo" />
+              : <Redirect to="/find/id" />
             }
           </Switch>
         </>
