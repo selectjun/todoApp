@@ -14,7 +14,7 @@ const Aside = () => {
   const logout = (e) => {
     e.preventDefault();
     if (confirm("정말로 로그아웃을 하시겠습니까?")) {
-      sessionStorage.setItem("xAuthToken", null);
+      sessionStorage.setItem("xAuthToken", "");
       location.href = "/login";
     }
   }
