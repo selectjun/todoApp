@@ -328,10 +328,14 @@ router.post("/find/id/", userFindIdValid, (req, res) => {
           message: "회원정보가 존재하지 않습니다\n다시 시도해주세요"
         });
       } else {
+        sendFindIdMail({
+          to: email,
+          name: user.name,
+          id: user.id
+        });
         res.status(200).json({
           success: true,
-          message: "조회가 완료 되었습니다",
-          id: user.id
+          message: "메일로 아이디 정보가 발송되었습니다",
         });
       }
     }).catch((err) => {
@@ -426,6 +430,16 @@ const generatePassword = () => {
   }
 
   return randomString;
+}
+
+const sendFindIdMail = (data) => {
+  mail.send({
+    to: data.to,
+    subject: "[TODO] 아이디 정보 발송",
+    html: `<h1>${data.name} 님</h1>` +
+          `아이디: ${data.id}<br />` +
+          `<a href="http://localhost:9000/">로그인하러 가기</a>`
+  });
 }
 
 /**
