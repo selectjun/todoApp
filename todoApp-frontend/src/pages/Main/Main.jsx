@@ -192,37 +192,37 @@ const Main = ({
   // 토글 처리
   const onChangeCurrentIsCompleteAll = useCallback(() => dispatch({ type: "CHANGE_CURRENT_IS_COMPLETE_ALL" }));
 
-  // TODO 데이터 변경 처리
+  // 수정 데이터 변경 처리
   const onChangeTodo = useCallback((e) => {
     const { name, value } = e.target;
     dispatch({ type: "CHANGE_TODO", name, value });
   });
   
-  // TODO 일시 변경
+  // 수정 데이터 일시 변경
   const onChangeTodoDate = useCallback((field, date) => dispatch({ type: "CHANGE_TODO_DATE", field: field, date: date }));
 
-  // TODO 파일 변경
+  // 수정 데이터 파일 변경
   const onChangeTodoFile = useCallback((file) => dispatch({ type: "CHANGE_TODO_FILE", file }));
 
-  // TODO 완료 여부 변경
+  // 수정 데이터 완료 여부 변경
   const onChangeTodoIsComplete = useCallback(() => dispatch({ type: "CHANGE_TODO_IS_COMPLETE" }));
 
-  // INPUT 데이터 변경 처리
+  // 등록 데이터 변경 처리
   const onChangeInput = useCallback((e) => {
     const { name, value } = e.target;
     dispatch({ type: "CHANGE_INPUT", name, value });
   });
 
-  // INPUT 초기화
+  // 등록 데이터 초기화
   const onResetInput = useCallback(() => dispatch({ type: "RESET_INPUT" }));
 
-  // INPUT 일시 변경
+  // 등록 데이터 일시 변경
   const onChangeInputDate = useCallback((field, date) => dispatch({ type: "CHANGE_INPUT_DATE", field: field, date: date }));
 
-  // INPUT 파일 변경
+  // 등록 데이터 파일 변경
   const onChangeInputFile = useCallback((file) => dispatch({ type: "CHANGE_INPUT_FILE", file }));
 
-  // INPUT 완료 여부 변경
+  // 등록 데이터 완료 여부 변경
   const onChangeInputIsComplete = useCallback(() => dispatch({ type: "CHANGE_INPUT_IS_COMPLETE" }));
 
   // 등록 팝업 열기
@@ -239,10 +239,7 @@ const Main = ({
     const url = `/api/todo/${todoId}/`
     API.get(url).then((res) => {
       setUpdateModalIsOpen(true);
-      dispatch({
-        type: "SET_TODO",
-        todo: res.data.todo
-      });
+      dispatch({ type: "SET_TODO", todo: res.data.todo });
     });
   });
 
@@ -267,7 +264,7 @@ const Main = ({
     });
   });
 
-  // To Do 수정
+  // 수정 처리
   const onSubmitModifyTodo = useCallback(() => {
     if (confirm("수정하시겠습니까?")) {
       const url = `/api/todo/${todo.todoId}/` +
@@ -289,14 +286,14 @@ const Main = ({
 
   // 초기화
   useEffect(() => {
-    // To Do 전체 갯수 가져오기
+    // 데이터 전체 갯수 가져오기
     API.get("/api/todo/count/").then(res => {
       if (res.data.success) {
         dispatch({
           type: "SET_TODO_COUT",
           todoCount: res.data.count
         });
-        // To Do 목록 가져오기
+        // 데이터 목록 가져오기
         API.get("/api/todo/").then(res => {
           if (res.data.success) {
             res.data.todoList.map(todo => addTodo(todo));
