@@ -23,7 +23,7 @@ API.interceptors.response.use(
     if (response) {
       if (response.status === 403) {
         alert(response.data.message);
-        sessionStorage.setItem("xAuthToken", null);
+        sessionStorage.setItem("xAuthToken", "");
         window.location.href = "/login";
       } else if (response.status === 404) {
         alert("파일이 존재하지 않습니다");
