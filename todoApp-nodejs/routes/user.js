@@ -76,15 +76,29 @@ router.post("/", userInsertValid, (req, res, next) => {
       where: {
         id: req.query.id
       }
-    }).then((count) => {
-      if (count > 0) {
+    }).then((idCount) => {
+      const encryptEmail = aes256.encrypt(req.query.email); 
+      if (idCount > 0) {
         res.status(400).json({
           success: false,
           message: "이미 등록된 ID가 있습니다"
         });
       } else {
-        req.query.email = aes256.encrypt(req.query.email);
-        next();
+        models.user.count({
+          where: {
+            email: encryptEmail
+          }
+        }).then((emailCount) => {
+          if (emailCount > 0) {
+            res.status(400).json({
+              success: false,
+              message: "이미 등록된 이메일이 있습니다"
+            }); 
+          } else {
+            req.query.email = encryptEmail;
+            next();
+          }
+        });
       }
     }).catch((err) => {
       logger.error(err.message);
