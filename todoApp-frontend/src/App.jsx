@@ -35,7 +35,7 @@ const App = ()=> {
             { 
               sessionStorage.getItem("xAuthToken")
               ? <Redirect to="/todo" />
-              : <Redirect to="/find/id" />
+              : <Redirect to="/login" />
             }
           </Switch>
         </>
