@@ -7,7 +7,7 @@ const webpack = require("webpack");
 module.exports =  {
   entry: "./src/index.jsx",
   output: {
-    path: path.join(__dirname, "/dist"),
+    path: path.join(__dirname, "dist"),
     filename: "main.js",
   },
   resolve: {
@@ -48,12 +48,14 @@ module.exports =  {
     ]
   },
   devServer: {
-    contentBase: path.join(__dirname, '/dist'),
-    compress: true,
+    contentBase: path.join(__dirname, 'dist'),
+    host: "0.0.0.0",
     port: 9000,
     hot: true,
     inline: true,
+    compress: true,
     historyApiFallback: true,
+    disableHostCheck: true,
     watchContentBase: true,
     watchOptions: {
       poll: true
