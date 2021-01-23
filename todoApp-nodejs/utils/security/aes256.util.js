@@ -6,6 +6,11 @@ const Crypto = require("crypto");
 const config = require("../../utils/config.util").getConfg();
 
 /**
+ * Logging
+ */
+const { logger } = require("../../config/winston");
+
+/**
  * AES-256 암호화
  * @param {*} secretKey 
  * @param {*} plainText 
@@ -42,6 +47,7 @@ module.exports = {
     try {
       return encryptWithAES256(config.aes256.key, plaintext);
     } catch(err) {
+      logger.error(err.message);
       new Error(`AES-256 복화화 과정 중, 에러가 발생하였습니다\n${err}`);
     }
   },
@@ -53,6 +59,7 @@ module.exports = {
     try {
       return decryptWithAES256(config.aes256.key, plaintext);
     } catch(err) {
+      logger.error(err.message);
       new Error(`AES-256 복화화 과정 중, 에러가 발생하였습니다\n${err}`);
     }
   }

@@ -66,6 +66,7 @@ router.post("/", userInsertValid, (req, res, next) => {
   const valid = validationResult(req);
 
   if (!valid.isEmpty()) {
+    logger.error(valid.errors[0].msg);
     res.status(400).json({
       success: false,
       param: valid.errors[0].param,
@@ -79,6 +80,7 @@ router.post("/", userInsertValid, (req, res, next) => {
     }).then((idCount) => {
       const encryptEmail = aes256.encrypt(req.query.email); 
       if (idCount > 0) {
+        logger.error(`ID ${req.query.id} is already exists.`);
         res.status(400).json({
           success: false,
           message: "이미 등록된 ID가 있습니다"
@@ -90,6 +92,7 @@ router.post("/", userInsertValid, (req, res, next) => {
           }
         }).then((emailCount) => {
           if (emailCount > 0) {
+            logger.error(`ID ${req.query.email} is already exists.`);
             res.status(400).json({
               success: false,
               message: "이미 등록된 이메일이 있습니다"
@@ -146,6 +149,7 @@ router.post("/password/:password/", (req, res, next) => {
   if (jwtProvider.validToken(token)) {
     next();
   } else {
+    logger.error("No atuthentification.");
     res.status(403).json({
       success: false,
       message: "권한이 없습니다"
@@ -168,6 +172,7 @@ router.post("/password/:password/", (req, res, next) => {
         message: "본인인증 되었습니다"
       });
     } else {
+      logger.error("Password missmatch.");
       res.status(400).json({
         success: false,
         message: "패스워드가 일치하지 않습니다"
@@ -191,6 +196,7 @@ router.get("/", (req, res, next) => {
   if (jwtProvider.validToken(token)) {
     next();
   } else {
+    logger.error("No atuthentification.");
     res.status(403).json({
       success: false,
       message: "권한이 없습니다"
@@ -229,6 +235,7 @@ router.get("/", (req, res, next) => {
         });
       });
     } else {
+      logger.error("User information is not exist.");
       res.status(400).json({
         success: false,
         message: "사용자 정보가 존재하지 않습니다"
@@ -252,6 +259,7 @@ router.put("/", userUpdateValid, (req, res, next) => {
   if (jwtProvider.validToken(token)) {
     next();
   } else {
+    logger.error("No atuthentification.");
     res.status(403).json({
       success: false,
       message: "권한이 없습니다"
@@ -261,6 +269,7 @@ router.put("/", userUpdateValid, (req, res, next) => {
   const valid = validationResult(req);
 
   if (!valid.isEmpty()) {
+    logger.error(valid.errors[0].msg);
     res.status(400).json({
       success: false,
       param: valid.errors[0].param,
@@ -300,6 +309,7 @@ router.put("/", userUpdateValid, (req, res, next) => {
           });
         });
       } else {
+        logger.error("Password missmathch.");
         res.status(400).json({
           success: false,
           message: "현재 패스워드가 일치하지 않습니다"
@@ -323,6 +333,7 @@ router.post("/find/id/", userFindIdValid, (req, res) => {
   const valid = validationResult(req);
 
   if (!valid.isEmpty()) {
+    logger.error(valid.errors[0].msg);
     res.status(400).json({
       success: false,
       param: valid.errors[0].param,
@@ -336,6 +347,7 @@ router.post("/find/id/", userFindIdValid, (req, res) => {
         email: aes256.encrypt(email)
       }
     }).then((user) => {
+      logger.error("User infomation is not exist.");
       if (!user) {
         res.status(400).json({
           success: false,
@@ -370,6 +382,7 @@ router.post("/find/password/", userFindPasswordValid, (req, res) => {
   const valid = validationResult(req);
 
   if (!valid.isEmpty()) {
+    logger.error(valid.errors[0].msg);
     res.status(400).json({
       success: false,
       param: valid.errors[0].param,
@@ -386,6 +399,7 @@ router.post("/find/password/", userFindPasswordValid, (req, res) => {
       }
     }).then((user) => {
       if (!user) {
+        logger.error("User information is not exist.");
         res.status(400).json({
           success: false,
           message: "회원정보가 존재하지 않습니다\n다시 시도해주세요"
@@ -434,6 +448,7 @@ router.post("/find/password/", userFindPasswordValid, (req, res) => {
  * @return string 패스워드
  */
 const generatePassword = () => {
+  logger.info("Called generatePassword.");
   const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz!@#$%^&*";
   const stringLength = 8;
 
@@ -447,6 +462,7 @@ const generatePassword = () => {
 }
 
 const sendFindIdMail = (data) => {
+  logger.info("Called sendFindIdMail.");
   mail.send({
     to: data.to,
     subject: "[TODO] 아이디 정보 발송",
@@ -461,6 +477,7 @@ const sendFindIdMail = (data) => {
  * @param {*} data 
  */
 const sendFindPasswordMail = (data) => {
+  logger.info("Called sendFindPasswordMail.");
   logger.info("Send mail for passsword find.");
   mail.send({
     to: data.to,

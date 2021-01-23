@@ -151,9 +151,10 @@ router.get("/:todoId/", (req, res) => {
   const todoId = req.params.todoId;
   
   if (!todoId) {
+    logger.error("[todoId] is undefined.");
     res.status(400).json({
       success: false,
-      message: "[todoId] 값이 존재하지 않습니다."
+      message: "[todoId] 값이 존재하지 않습니다"
     });
   } else {
     models.todo.findOne({
@@ -205,6 +206,7 @@ router.post("/", todoInsertValid, (req, res) => {
   req.query.userId = userId;
 
   if (!valid.isEmpty()) {
+    logger.error(valid.errors[0].msg);
     res.status(400).json({
       success: false,
       param: valid.errors[0].param,
@@ -213,6 +215,7 @@ router.post("/", todoInsertValid, (req, res) => {
   } else {
     todoUpload(req, res, async (err) => {
       if(req.uploadError === "EXT_MISSMATCH") {
+        logger.error("EXT_MISSMATCH");
         res.status(400).json({
           success: false,
           message: "허용되지 않는 파일입니다"
@@ -257,6 +260,7 @@ router.put("/:todoId/", todoUpdateValid, asyncHandler(async (req, res) => {
   const todoId = req.params.todoId;
 
   if (!valid.isEmpty()) {
+    logger.error(valid.errors[0].msg);
     res.status(400).json({
       success: false,
       param: valid.errors[0].param,
@@ -265,6 +269,7 @@ router.put("/:todoId/", todoUpdateValid, asyncHandler(async (req, res) => {
   } else {
     todoUpload(req, res, async (err) => {
       if(req.uploadError === "EXT_MISSMATCH") {
+        logger.error("EXT_MISSMATCH");
         res.status(400).json({
           success: false,
           message: "허용되지 않는 파일입니다"
@@ -315,6 +320,7 @@ router.put("/:todoId/complete/", (req, res) => {
   const todoId = req.params.todoId
   
   if (!todoId) {
+    logger.error("todoId is undefined.");
     res.status(400).json({
       success: false,
       message: "[todoId] 값이 존재하지 않습니다"
@@ -357,6 +363,7 @@ router.put("/:todoId/delete/", (req, res) => {
   const todoId = req.params.todoId;
 
   if (!todoId) {
+    logger.error("todoId is undefined.");
     res.status(400).json({
       success: false,
       message: "[todoId] 값이 존재하지 않습니다"

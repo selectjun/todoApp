@@ -35,6 +35,7 @@ router.post("/", tokenGetValid, (req, res, next) => {
   const valid = validationResult(req);
 
   if (!valid.isEmpty()) {
+    logger.error(valid.errors[0].msg);
     res.status(400).json({
       success: false,
       param: valid.errors[0].param,
@@ -47,6 +48,7 @@ router.post("/", tokenGetValid, (req, res, next) => {
       }
     }).then(count => {
       if (count < 1) {
+        logger.error(`User ${req.query.id} is not exist.`);
         res.status(400).json({
           success: false,
           message: "등록되지 않은 사용자입니다"
@@ -69,6 +71,7 @@ router.post("/", tokenGetValid, (req, res, next) => {
     }
   }).then(user => {
     if (!passwordEncoder.match(req.query.password, user.password)) {
+      logger.error(`Password missmatch.`);
       res.json({
         success: false,
         message: "암호가 맞지 않습니다"

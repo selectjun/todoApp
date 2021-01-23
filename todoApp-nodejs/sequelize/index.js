@@ -2,6 +2,13 @@ const { Sequelize } = require('sequelize');
 const { applyExtraSetup } = require('./extra-setup');
 
 /**
+ * Logging
+ */
+const { logger } = require("../config/winston");
+
+logger.info("Lodding databases.");
+
+/**
  * 설정
  */
 const config = require("../utils/config.util").getConfg();
@@ -27,10 +34,10 @@ const sequelize = new Sequelize(
 sequelize
   .authenticate()
   .then(() => {
-    console.log("Connection has been established successfully.");
+    logger.info("Connection has been established successfully.");
   })
   .catch(err => {
-    console.error("Unable to connect to the database: ", err);
+    logger.error("Unable to connect to the database: ", err);
   });
 
 // Model 정의

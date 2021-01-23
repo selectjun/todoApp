@@ -2,12 +2,18 @@ const jwt = require('jsonwebtoken');
 const config = require("../../utils/config.util").getConfg();
 
 /**
+ * Logging
+ */
+const { logger } = require("../../config/winston");
+
+/**
  * JWT Token 생성
  * @param userPk    회원 구별 정보(아이디)
  * @param roles     회원 권한
  * @return          token
  */
 const createToken = (userPk, roles) => {
+  logger.info("Called createToken.");
   return jwt.sign({
     subject: userPk,
     roles: roles
@@ -22,6 +28,7 @@ const createToken = (userPk, roles) => {
  * @return      권한
  */
 const getAuthentication = (token) => {
+  logger.info("Called getAuthentication.");
   return jwt.verify(token, Buffer.from(config.jwt.secretKey).toString("base64")).roles;
 }
 
@@ -31,6 +38,7 @@ const getAuthentication = (token) => {
  * @return      회원 구별 정보(아이디)
  */
 const getUserPk = (token) => {
+  logger.info("Called getUserPk.");
   return jwt.verify(token, Buffer.from(config.jwt.secretKey).toString("base64")).subject;
 }
 
@@ -40,6 +48,7 @@ const getUserPk = (token) => {
  * @return          token
  */
 const resolveToken = (req) => {
+  logger.info("Called resolveToken.");
   return req.get("X-AUTH-TOKEN");
 }
 
@@ -49,11 +58,13 @@ const resolveToken = (req) => {
  * @return      유효성 여부
  */
 const validToken = (token) => {
+  logger.info("Called validToken.");
   try {
     if (jwt.verify(token, Buffer.from(config.jwt.secretKey).toString("base64"))) {
       return true;
     }
   } catch(err) {
+    logger.error(err.message);
     return false;
   }
 }
