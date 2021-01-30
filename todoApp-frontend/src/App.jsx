@@ -14,15 +14,6 @@ import User from "./pages/User";
 import Find from "./pages/Find";
 
 const App = ()=> {
-  const renderRoute = (Componentx) => {
-    return (props) => {
-      const newProps = {
-        ...props,
-      };
-      return <Component {...newProps} />;
-    };
-  };
-
   return(
     <Router>
         <>

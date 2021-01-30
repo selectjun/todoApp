@@ -14,10 +14,8 @@ const Login = () => {
   const [loginData, setLoginData] = useState({id: "", password: ""});
 
   useEffect(() => {
-    return () => {
-      if (sessionStorage.getItem("xAuthToken")) {
-        history.push("/");
-      }
+    if (sessionStorage.getItem("xAuthToken")) {
+      history.push("/");
     }
   }, []);
 
