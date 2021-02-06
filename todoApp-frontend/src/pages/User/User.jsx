@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import sha256 from "sha256";
 
 import Aside from "@components/Aside"
@@ -9,7 +9,7 @@ import PasswordAuth from "./PasswordAuth";
 
 import { API } from "@components/axios";
 
-import "./user.scss"
+import "./user.scss";
 
 const User = () => {
   const [password, setPassword] = useState("");
@@ -28,6 +28,8 @@ const User = () => {
       }
     });
   };
+
+  useEffect(() => { document.title = "User | Todo App"; }, []);
 
   return (
     <div className="container user">

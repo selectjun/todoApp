@@ -80,7 +80,9 @@ const Join = () => {
         }
       });
     }
-  }
+  };
+
+  useEffect(() => { document.title = "Join | Todo App"; }, []);
 
   return (
     <div className="container join">

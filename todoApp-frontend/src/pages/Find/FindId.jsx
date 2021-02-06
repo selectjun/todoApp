@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import { API } from "@components/axios";
@@ -24,7 +24,9 @@ const FindId = () => {
         }
       });
     }
-  }
+  };
+
+  useEffect(() => { document.title = "Find ID | Todo App"; }, []);
 
   return (
     <div>

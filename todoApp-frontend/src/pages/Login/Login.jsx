@@ -14,6 +14,8 @@ const Login = () => {
   const [loginData, setLoginData] = useState({id: "", password: ""});
 
   useEffect(() => {
+    document.title = "Login | Todo App";
+
     if (sessionStorage.getItem("xAuthToken")) {
       history.push("/");
     }

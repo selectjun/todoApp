@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import { API } from "@components/axios";
@@ -40,6 +40,8 @@ const FindPassword = () => {
       });
     }
   }
+
+  useEffect(() => { document.title = "Find Password | Todo App"; }, []);
 
   return (
     <div>

@@ -286,6 +286,8 @@ const Main = ({
 
   // 초기화
   useEffect(() => {
+    document.title = "List | Todo App";
+
     // 데이터 전체 갯수 가져오기
     API.get("/api/todo/count/").then(res => {
       if (res.data.success) {
